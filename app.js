@@ -22,6 +22,14 @@
 // no matter where we actually lift from.
 process.chdir(__dirname);
 
+var mongoose;
+mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/framework2', function(err) {
+  if (err) {
+    console.log(err);
+  }
+});
+
 // Ensure a "sails" can be located:
 (function() {
   var sails;
