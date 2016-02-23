@@ -8,8 +8,27 @@ var schema = new Schema({
     type: [String],
     index: true
   },
+  image: {
+    type: [{
+      image: String,
+      title: String,
+      order: Number,
+      status: Number,
+      modificationTime: Number
+    }],
+    index: true
+  },
+  video: {
+    type: [{
+      video: String,
+      title: String,
+      order: Number,
+      status: Number,
+      modificationTime: Number
+    }],
+    index: true
+  },
   content: String,
-  video: String,
   modificationTime: Date,
   status: Number
 });

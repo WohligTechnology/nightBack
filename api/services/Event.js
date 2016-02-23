@@ -1,14 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-id
-image
-title
-order
-status
-creationTime
-modificationTime
-
 var schema = new Schema({
   name: String,
   image: String,
@@ -16,7 +8,7 @@ var schema = new Schema({
     type: [String],
     index: true
   },
-  images: {
+  image: {
     type: [{
       image: String,
       title: String,
