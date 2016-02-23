@@ -9,7 +9,7 @@ var schema = new Schema({
   status: Number
 });
 
-module.exports = mongoose.model('PhotoGalleryCategory', schema);
+module.exports = mongoose.model('AudioGalleryCategory', schema);
 var models = {};
 
 module.exports = _.assign(module.exports, models);

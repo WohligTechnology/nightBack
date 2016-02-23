@@ -6,10 +6,11 @@ var schema = new Schema({
   video: String,
   order: Number,
   modificationTime: Date,
+  category: { type: Schema.Types.ObjectId, ref: 'VideoGalleryCategory' },
   status: Number
 });
 
-module.exports = mongoose.model('PhotoGalleryCategory', schema);
+module.exports = mongoose.model('VideoGallery', schema);
 var models = {};
 
 module.exports = _.assign(module.exports, models);

@@ -6,10 +6,11 @@ var schema = new Schema({
   image: String,
   order: Number,
   modificationTime: Date,
+  category: { type: Schema.Types.ObjectId, ref: 'PhotoGalleryCategory' },
   status: Number
 });
 
-module.exports = mongoose.model('PhotoGalleryCategory', schema);
+module.exports = mongoose.model('PhotoGallery', schema);
 var models = {};
 
 module.exports = _.assign(module.exports, models);
