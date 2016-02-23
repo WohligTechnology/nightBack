@@ -23,7 +23,7 @@ var models = {
         _id: data._id
       }, data, callback);
     } else {
-      project.save(function(err, data) {
+      this.save(function(err, data) {
         if (err) {
           callback(err, false);
         } else {
@@ -36,6 +36,7 @@ var models = {
     this.findOneAndRemove({
       _id: data._id
     }, function(err, data) {
+
       if (err) {
         callback(err, false);
       } else {
@@ -49,7 +50,7 @@ var models = {
   getOne: function(data, callback) {
     this.findOne({
       "_id": data._id
-    }).populate('Api').exec(callback);
+    }).exec(callback);
   }
 
 };
