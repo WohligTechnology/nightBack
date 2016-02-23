@@ -11,19 +11,31 @@ var schema = new Schema({
   status: Number,
   notification: {
     type: [{
-      timestamp: Date,
+      device: String,
       os: String,
-      notificationId: String
+      notificationId: String,
+      modificationTime: Date
     }],
     index: true
   },
   oauthLogin: {
     type: [{
       socialProvider: String,
-      socialId: String
+      socialId: String,
+      modificationTime: Date
     }],
     index: true
-  }
+  },
+  config: {
+    type: [{
+      name: String,
+      content: String,
+      status: Number,
+      modificationTime: Date
+    }],
+    index: true
+  },
+  modificationTime: Date
 });
 
 
@@ -34,15 +46,14 @@ var models = {
       "email": data.email
     }).exec(function(err, data2) {
       if (err) {
-        callback(err,data);
+        callback(err, data);
       } else {
         var user = this(data);
-        if(data2 === 0) {
-          user.save(function(err,data3) {
-            callback(err,data3);
+        if (data2 === 0) {
+          user.save(function(err, data3) {
+            callback(err, data3);
           });
-        }
-        else {
+        } else {
           callback("Email already Existing", false);
         }
 
