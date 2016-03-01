@@ -6,7 +6,7 @@
  */
 
 module.exports = {
-	
+
 
 
   /**
@@ -56,6 +56,16 @@ module.exports = {
     return res.json({
       todo: 'getAll() is not implemented yet!'
     });
+  },
+
+
+
+	/**
+   * `ContactController.reorder()`
+   */
+  reorder: function(req, res) {
+    return res.json({
+      todo: 'reorder() is not implemented yet!'
+    });
   }
 };
-

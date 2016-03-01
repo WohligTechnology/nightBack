@@ -6,7 +6,7 @@
  */
 
 module.exports = {
-	
+
 
 
   /**
@@ -56,6 +56,8 @@ module.exports = {
     return res.json({
       todo: 'getAll() is not implemented yet!'
     });
-  }
-};
+  },
 
+
+
+};

@@ -6,13 +6,13 @@
  */
 
 module.exports = {
-	
+
 
 
   /**
    * `AudioGalleryController.create()`
    */
-  create: function (req, res) {
+  create: function(req, res) {
     return res.json({
       todo: 'create() is not implemented yet!'
     });
@@ -22,7 +22,7 @@ module.exports = {
   /**
    * `AudioGalleryController.edit()`
    */
-  edit: function (req, res) {
+  edit: function(req, res) {
     return res.json({
       todo: 'edit() is not implemented yet!'
     });
@@ -32,7 +32,7 @@ module.exports = {
   /**
    * `AudioGalleryController.delete()`
    */
-  delete: function (req, res) {
+  delete: function(req, res) {
     return res.json({
       todo: 'delete() is not implemented yet!'
     });
@@ -42,7 +42,7 @@ module.exports = {
   /**
    * `AudioGalleryController.get()`
    */
-  get: function (req, res) {
+  get: function(req, res) {
     return res.json({
       todo: 'get() is not implemented yet!'
     });
@@ -52,10 +52,19 @@ module.exports = {
   /**
    * `AudioGalleryController.getAll()`
    */
-  getAll: function (req, res) {
+  getAll: function(req, res) {
     return res.json({
       todo: 'getAll() is not implemented yet!'
     });
+  },
+
+
+	/**
+   * `AudioGalleryController.reorder()`
+   */
+  reorder: function(req, res) {
+    return res.json({
+      todo: 'reorder() is not implemented yet!'
+    });
   }
 };
-
