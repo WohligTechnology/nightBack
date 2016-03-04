@@ -67,7 +67,7 @@ var models = {
     });
   },
   getAll: function(data, callback) {
-    this.find().exec(callback);
+    this.find().limit(100).exec(callback);
   },
   getOne: function(data, callback) {
     this.findOne({

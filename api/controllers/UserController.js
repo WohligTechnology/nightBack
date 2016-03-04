@@ -6,5 +6,10 @@
  */
 
 module.exports = {
-
+  index: function(req,res) {
+    res.json({Chintan:"Shah"});
+  },
+  get : function(req,res) {
+    res.json(passport);
+  }
 };
