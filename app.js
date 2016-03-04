@@ -24,9 +24,13 @@ process.chdir(__dirname);
 
 var mongoose;
 mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/framework2', function(err) {
+mongoose.connect('mongodb://localhost:27017/blazen', function(err,data) {
   if (err) {
     console.log(err);
+  }
+  else {
+    console.log(data);
+    console.log("Database Connected to blazen");
   }
 });
 

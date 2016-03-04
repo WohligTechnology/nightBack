@@ -30,8 +30,8 @@ module.exports.use(new LocalStrategy({
 
 
 module.exports.use(new FacebookStrategy({
-    clientID: "873276856121821",
-    clientSecret: "3ecf121f8c741d41dd35d55dc0db711c",
+    clientID: "141304936259731",
+    clientSecret: "322f66550b62b9492e7271615de6ae40",
     callbackURL: "/user/loginFacebook/",
     enableProof: false
   },
@@ -74,10 +74,12 @@ module.exports.use(new FacebookStrategy({
 module.exports.use(new TwitterStrategy({
     consumerKey: "gZPPSIqZHL3mqlgq76bBc4Yqq",
     consumerSecret: "FGZTNSrJjztzlSsoX5TzvnWzVTFfpbw4D8veCFH8ME75Jup2CK",
-    callbackURL: "/user/loginTwitter/",
+    callbackURL: "/user/loginTwitterCallback/",
   },
   function(token, tokenSecret, profile, done) {
+
     if (!_.isEmpty(profile)) {
+
       User.find({
         "oauthLogin.socialId": profile.id + ""
       }).exec(function(err, data) {
