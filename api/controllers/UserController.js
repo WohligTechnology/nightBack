@@ -49,7 +49,7 @@ module.exports = {
         });
       }
     };
-    passport.authenticate('local', {
+    Passport.authenticate('local', {
       failureRedirect: '/login'
     }, callback)(req, res);
   },
@@ -88,7 +88,7 @@ module.exports = {
         });
       }
     };
-    passport.authenticate('facebook', {
+    Passport.authenticate('facebook', {
       scope: ['public_profile', 'user_friends', 'email']
     }, callback)(req, res);
   },
@@ -124,10 +124,10 @@ module.exports = {
         });
       }
     };
-    passport.authenticate('twitter', {}, callback)(req, res);
+    Passport.authenticate('twitter', {}, callback)(req, res);
   },
   loginGoogle: function(req, res) {
-    passport.authenticate('google', {
+    Passport.authenticate('google', {
       scope: ['https://www.googleapis.com/auth/plus.login']
     })(req, res);
   },
@@ -153,7 +153,7 @@ module.exports = {
         });
       }
     };
-    passport.authenticate('google', {
+    Passport.authenticate('google', {
       failureRedirect: '/login'
     }, callback)(req, res);
   }
@@ -209,7 +209,7 @@ module.exports = {
         });
       }
     };
-    passport.authenticate('local', {
+    Passport.authenticate('local', {
       failureRedirect: '/login'
     }, callback)(req, res);
   },
@@ -248,7 +248,7 @@ module.exports = {
         });
       }
     };
-    passport.authenticate('facebook', {
+    Passport.authenticate('facebook', {
       scope: ['public_profile', 'user_friends', 'email']
     }, callback)(req, res);
 
@@ -285,10 +285,10 @@ module.exports = {
         });
       }
     };
-    passport.authenticate('twitter', {}, callback)(req, res);
+    Passport.authenticate('twitter', {}, callback)(req, res);
   },
   loginGoogle: function(req, res) {
-    passport.authenticate('google', {
+    Passport.authenticate('google', {
       scope: ['https://www.googleapis.com/auth/plus.login']
     })(req, res);
   },
@@ -314,7 +314,7 @@ module.exports = {
         });
       }
     };
-    passport.authenticate('google', {
+    Passport.authenticate('google', {
       failureRedirect: '/login'
     }, callback)(req, res);
   }
