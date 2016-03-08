@@ -149,7 +149,7 @@ module.exports = {
         });
       }
     };
-    Passport.authenticate('twitter', {},callback)(req, res);
+    Passport.authenticate('twitter', {}, callback)(req, res);
   },
   loginGoogle: function(req, res) {
     Passport.authenticate('google', {
@@ -181,5 +181,13 @@ module.exports = {
     Passport.authenticate('google', {
       failureRedirect: '/login'
     }, callback)(req, res);
+  },
+  test: function(req, res) {
+
+    sails.log.error('Test is been Called');
+    res.json({
+      value: "done"
+    });
   }
+
 };
