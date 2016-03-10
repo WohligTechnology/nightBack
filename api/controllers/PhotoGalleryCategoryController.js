@@ -1,71 +1,37 @@
-/**
- * PhotoGalleryCategoryController
- *
- * @description :: Server-side logic for managing photogallerycategories
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
-
 module.exports = {
 
-
-
-  /**
-   * `PhotoGalleryCategoryController.create()`
-   */
-  create: function (req, res) {
-    return res.json({
-      todo: 'create() is not implemented yet!'
-    });
+  save: function (req, res) {
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    PhotoGalleryCategory.saveData(req.body, callback);
   },
 
-
-  /**
-   * `PhotoGalleryCategoryController.edit()`
-   */
-  edit: function (req, res) {
-    return res.json({
-      todo: 'edit() is not implemented yet!'
-    });
-  },
-
-
-  /**
-   * `PhotoGalleryCategoryController.delete()`
-   */
   delete: function (req, res) {
-    return res.json({
-      todo: 'delete() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    PhotoGalleryCategory.deleteData(req.body, callback);
   },
 
-
-  /**
-   * `PhotoGalleryCategoryController.get()`
-   */
   get: function (req, res) {
-    return res.json({
-      todo: 'get() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    PhotoGalleryCategory.getAll(data, callback);
   },
 
-
-  /**
-   * `PhotoGalleryCategoryController.getAll()`
-   */
   getAll: function (req, res) {
-    return res.json({
-      todo: 'getAll() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    PhotoGalleryCategory.getOne(data, callback);
   },
 
-
-
-	/**
-   * `ContactController.reorder()`
-   */
   reorder: function(req, res) {
-    return res.json({
-      todo: 'reorder() is not implemented yet!'
-    });
+    function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    PhotoGalleryCategory.reorder(data, callback);
   }
 };

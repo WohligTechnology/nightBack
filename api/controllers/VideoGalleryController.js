@@ -1,72 +1,37 @@
-/**
- * VideoGalleryController
- *
- * @description :: Server-side logic for managing videogalleries
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
-
 module.exports = {
 
-
-
-  /**
-   * `VideoGalleryController.create()`
-   */
-  create: function (req, res) {
-    return res.json({
-      todo: 'create() is not implemented yet!'
-    });
+  save: function (req, res) {
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    VideoGallery.saveData(req.body, callback);
   },
 
-
-  /**
-   * `VideoGalleryController.edit()`
-   */
-  edit: function (req, res) {
-    return res.json({
-      todo: 'edit() is not implemented yet!'
-    });
-  },
-
-
-  /**
-   * `VideoGalleryController.delete()`
-   */
   delete: function (req, res) {
-    return res.json({
-      todo: 'delete() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    VideoGallery.deleteData(req.body, callback);
   },
 
-
-  /**
-   * `VideoGalleryController.get()`
-   */
   get: function (req, res) {
-    return res.json({
-      todo: 'get() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    VideoGallery.getAll(data, callback);
   },
 
-
-  /**
-   * `VideoGalleryController.getAll()`
-   */
   getAll: function (req, res) {
-    return res.json({
-      todo: 'getAll() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    VideoGallery.getOne(data, callback);
   },
 
-
-
-
-	/**
-   * `ContactController.reorder()`
-   */
   reorder: function(req, res) {
-    return res.json({
-      todo: 'reorder() is not implemented yet!'
-    });
+    function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    VideoGallery.reorder(data, callback);
   }
 };

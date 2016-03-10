@@ -1,71 +1,37 @@
-/**
- * PhotoGalleryController
- *
- * @description :: Server-side logic for managing photogalleries
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
-
 module.exports = {
 
-
-
-  /**
-   * `PhotoGalleryController.create()`
-   */
-  create: function (req, res) {
-    return res.json({
-      todo: 'create() is not implemented yet!'
-    });
+  save: function (req, res) {
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    PhotoGallery.saveData(req.body, callback);
   },
 
-
-  /**
-   * `PhotoGalleryController.edit()`
-   */
-  edit: function (req, res) {
-    return res.json({
-      todo: 'edit() is not implemented yet!'
-    });
-  },
-
-
-  /**
-   * `PhotoGalleryController.delete()`
-   */
   delete: function (req, res) {
-    return res.json({
-      todo: 'delete() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    PhotoGallery.deleteData(req.body, callback);
   },
 
-
-  /**
-   * `PhotoGalleryController.get()`
-   */
   get: function (req, res) {
-    return res.json({
-      todo: 'get() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    PhotoGallery.getAll(data, callback);
   },
 
-
-  /**
-   * `PhotoGalleryController.getAll()`
-   */
   getAll: function (req, res) {
-    return res.json({
-      todo: 'getAll() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    PhotoGallery.getOne(data, callback);
   },
 
-
-
-	/**
-   * `ContactController.reorder()`
-   */
   reorder: function(req, res) {
-    return res.json({
-      todo: 'reorder() is not implemented yet!'
-    });
+    function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    PhotoGallery.reorder(data, callback);
   }
 };

@@ -1,71 +1,37 @@
-/**
- * AudioGalleryCategoryController
- *
- * @description :: Server-side logic for managing audiogallerycategories
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
-
 module.exports = {
 
-
-
-  /**
-   * `AudioGalleryCategoryController.create()`
-   */
-  create: function(req, res) {
-    return res.json({
-      todo: 'create() is not implemented yet!'
-    });
+  save: function (req, res) {
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    AudioGalleryCategory.saveData(req.body, callback);
   },
 
-
-  /**
-   * `AudioGalleryCategoryController.edit()`
-   */
-  edit: function(req, res) {
-    return res.json({
-      todo: 'edit() is not implemented yet!'
-    });
+  delete: function (req, res) {
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    AudioGalleryCategory.deleteData(req.body, callback);
   },
 
-
-  /**
-   * `AudioGalleryCategoryController.delete()`
-   */
-  delete: function(req, res) {
-    return res.json({
-      todo: 'delete() is not implemented yet!'
-    });
+  get: function (req, res) {
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    AudioGalleryCategory.getAll(data, callback);
   },
 
-
-  /**
-   * `AudioGalleryCategoryController.get()`
-   */
-  get: function(req, res) {
-    return res.json({
-      todo: 'get() is not implemented yet!'
-    });
+  getAll: function (req, res) {
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    AudioGalleryCategory.getOne(data, callback);
   },
 
-
-  /**
-   * `AudioGalleryCategoryController.getAll()`
-   */
-  getAll: function(req, res) {
-    return res.json({
-      todo: 'getAll() is not implemented yet!'
-    });
-  },
-
-
-
-  /**
-   * `AudioGalleryCategoryController.reorder()`
-   */
   reorder: function(req, res) {
-    return res.json({
-      todo: 'reorder() is not implemented yet!'
-    });
+    function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    AudioGalleryCategory.reorder(data, callback);
   }
 };

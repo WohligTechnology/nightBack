@@ -1,71 +1,37 @@
-/**
- * HomeSliderController
- *
- * @description :: Server-side logic for managing homesliders
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
-
 module.exports = {
-	
 
-
-  /**
-   * `HomeSliderController.create()`
-   */
-  create: function (req, res) {
-    return res.json({
-      todo: 'create() is not implemented yet!'
-    });
+  save: function (req, res) {
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    HomeSlider.saveData(req.body, callback);
   },
 
-
-  /**
-   * `HomeSliderController.edit()`
-   */
-  edit: function (req, res) {
-    return res.json({
-      todo: 'edit() is not implemented yet!'
-    });
-  },
-
-
-  /**
-   * `HomeSliderController.delete()`
-   */
   delete: function (req, res) {
-    return res.json({
-      todo: 'delete() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    HomeSlider.deleteData(req.body, callback);
   },
 
-
-  /**
-   * `HomeSliderController.get()`
-   */
   get: function (req, res) {
-    return res.json({
-      todo: 'get() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    HomeSlider.getAll(data, callback);
   },
 
-
-  /**
-   * `HomeSliderController.getAll()`
-   */
   getAll: function (req, res) {
-    return res.json({
-      todo: 'getAll() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    HomeSlider.getOne(data, callback);
   },
 
-
-  /**
-   * `HomeSliderController.reorder()`
-   */
-  reorder: function (req, res) {
-    return res.json({
-      todo: 'reorder() is not implemented yet!'
-    });
+  reorder: function(req, res) {
+    function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    HomeSlider.reorder(data, callback);
   }
 };
-

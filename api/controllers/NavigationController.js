@@ -1,71 +1,37 @@
-/**
- * NavigationController
- *
- * @description :: Server-side logic for managing navigations
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
-
 module.exports = {
-	
 
-
-  /**
-   * `NavigationController.create()`
-   */
-  create: function (req, res) {
-    return res.json({
-      todo: 'create() is not implemented yet!'
-    });
+  save: function (req, res) {
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    Navigation.saveData(req.body, callback);
   },
 
-
-  /**
-   * `NavigationController.edit()`
-   */
-  edit: function (req, res) {
-    return res.json({
-      todo: 'edit() is not implemented yet!'
-    });
-  },
-
-
-  /**
-   * `NavigationController.delete()`
-   */
   delete: function (req, res) {
-    return res.json({
-      todo: 'delete() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    Navigation.deleteData(req.body, callback);
   },
 
-
-  /**
-   * `NavigationController.get()`
-   */
   get: function (req, res) {
-    return res.json({
-      todo: 'get() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    Navigation.getAll(data, callback);
   },
 
-
-  /**
-   * `NavigationController.getAll()`
-   */
   getAll: function (req, res) {
-    return res.json({
-      todo: 'getAll() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    Navigation.getOne(data, callback);
   },
 
-
-  /**
-   * `NavigationController.reorder()`
-   */
-  reorder: function (req, res) {
-    return res.json({
-      todo: 'reorder() is not implemented yet!'
-    });
+  reorder: function(req, res) {
+    function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    Navigation.reorder(data, callback);
   }
 };
-

@@ -1,63 +1,30 @@
-/**
- * UserNotificationController
- *
- * @description :: Server-side logic for managing usernotifications
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
-
 module.exports = {
 
-
-
-  /**
-   * `UserNotificationController.create()`
-   */
-  create: function (req, res) {
-    return res.json({
-      todo: 'create() is not implemented yet!'
-    });
+  save: function (req, res) {
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    UserNotification.saveData(req.body, callback);
   },
 
-
-  /**
-   * `UserNotificationController.edit()`
-   */
-  edit: function (req, res) {
-    return res.json({
-      todo: 'edit() is not implemented yet!'
-    });
-  },
-
-
-  /**
-   * `UserNotificationController.delete()`
-   */
   delete: function (req, res) {
-    return res.json({
-      todo: 'delete() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    UserNotification.deleteData(req.body, callback);
   },
 
-
-  /**
-   * `UserNotificationController.get()`
-   */
   get: function (req, res) {
-    return res.json({
-      todo: 'get() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    UserNotification.getAll(data, callback);
   },
 
-
-  /**
-   * `UserNotificationController.getAll()`
-   */
   getAll: function (req, res) {
-    return res.json({
-      todo: 'getAll() is not implemented yet!'
-    });
-  },
-
-
-
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    UserNotification.getOne(data, callback);
+  }
 };

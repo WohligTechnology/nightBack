@@ -1,70 +1,37 @@
-/**
- * AudioGalleryController
- *
- * @description :: Server-side logic for managing audiogalleries
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
-
 module.exports = {
 
-
-
-  /**
-   * `AudioGalleryController.create()`
-   */
-  create: function(req, res) {
-    return res.json({
-      todo: 'create() is not implemented yet!'
-    });
+  save: function (req, res) {
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    AudioGallery.saveData(req.body, callback);
   },
 
-
-  /**
-   * `AudioGalleryController.edit()`
-   */
-  edit: function(req, res) {
-    return res.json({
-      todo: 'edit() is not implemented yet!'
-    });
+  delete: function (req, res) {
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    AudioGallery.deleteData(req.body, callback);
   },
 
-
-  /**
-   * `AudioGalleryController.delete()`
-   */
-  delete: function(req, res) {
-    return res.json({
-      todo: 'delete() is not implemented yet!'
-    });
+  get: function (req, res) {
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    AudioGallery.getAll(data, callback);
   },
 
-
-  /**
-   * `AudioGalleryController.get()`
-   */
-  get: function(req, res) {
-    return res.json({
-      todo: 'get() is not implemented yet!'
-    });
+  getAll: function (req, res) {
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    AudioGallery.getOne(data, callback);
   },
 
-
-  /**
-   * `AudioGalleryController.getAll()`
-   */
-  getAll: function(req, res) {
-    return res.json({
-      todo: 'getAll() is not implemented yet!'
-    });
-  },
-
-
-	/**
-   * `AudioGalleryController.reorder()`
-   */
   reorder: function(req, res) {
-    return res.json({
-      todo: 'reorder() is not implemented yet!'
-    });
+    function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    AudioGallery.reorder(data, callback);
   }
 };

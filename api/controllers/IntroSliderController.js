@@ -1,71 +1,37 @@
-/**
- * IntroSliderController
- *
- * @description :: Server-side logic for managing introsliders
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
-
 module.exports = {
-	
 
-
-  /**
-   * `IntroSliderController.create()`
-   */
-  create: function (req, res) {
-    return res.json({
-      todo: 'create() is not implemented yet!'
-    });
+  save: function (req, res) {
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    IntroSlider.saveData(req.body, callback);
   },
 
-
-  /**
-   * `IntroSliderController.edit()`
-   */
-  edit: function (req, res) {
-    return res.json({
-      todo: 'edit() is not implemented yet!'
-    });
-  },
-
-
-  /**
-   * `IntroSliderController.delete()`
-   */
   delete: function (req, res) {
-    return res.json({
-      todo: 'delete() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    IntroSlider.deleteData(req.body, callback);
   },
 
-
-  /**
-   * `IntroSliderController.get()`
-   */
   get: function (req, res) {
-    return res.json({
-      todo: 'get() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    IntroSlider.getAll(data, callback);
   },
 
-
-  /**
-   * `IntroSliderController.getAll()`
-   */
   getAll: function (req, res) {
-    return res.json({
-      todo: 'getAll() is not implemented yet!'
-    });
+		function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    IntroSlider.getOne(data, callback);
   },
 
-
-  /**
-   * `IntroSliderController.reorder()`
-   */
-  reorder: function (req, res) {
-    return res.json({
-      todo: 'reorder() is not implemented yet!'
-    });
+  reorder: function(req, res) {
+    function callback(err, data) {
+      Config.globalCallback(err,data,res);
+    }
+    IntroSlider.reorder(data, callback);
   }
 };
-

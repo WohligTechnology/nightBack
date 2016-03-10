@@ -8,6 +8,19 @@ var schema = new Schema({
 });
 module.exports = mongoose.model('Config', schema);
 var models = {
+  globalCallback: function(err, data, res) {
+    if (err) {
+      res.json({
+        error: err,
+        value: data
+      });
+    } else {
+      res.json({
+        data: data,
+        value: true
+      });
+    }
+  },
   saveData: function(data, callback) {
     var project = this(data);
     if (data._id) {
