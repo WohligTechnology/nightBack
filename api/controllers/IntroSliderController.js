@@ -18,20 +18,20 @@ module.exports = {
 		function callback(err, data) {
       Config.globalCallback(err,data,res);
     }
-    IntroSlider.getAll(data, callback);
+    IntroSlider.getAll(req.body, callback);
   },
 
   getAll: function (req, res) {
 		function callback(err, data) {
       Config.globalCallback(err,data,res);
     }
-    IntroSlider.getOne(data, callback);
+    IntroSlider.getOne(req.body, callback);
   },
 
   reorder: function(req, res) {
     function callback(err, data) {
       Config.globalCallback(err,data,res);
     }
-    IntroSlider.reorder(data, callback);
+    IntroSlider.reorder(req.body, callback);
   }
 };

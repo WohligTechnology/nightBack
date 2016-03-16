@@ -18,20 +18,20 @@ module.exports = {
 		function callback(err, data) {
       Config.globalCallback(err,data,res);
     }
-    PhotoGalleryCategory.getAll(data, callback);
+    PhotoGalleryCategory.getAll(req.body, callback);
   },
 
   getAll: function (req, res) {
 		function callback(err, data) {
       Config.globalCallback(err,data,res);
     }
-    PhotoGalleryCategory.getOne(data, callback);
+    PhotoGalleryCategory.getOne(req.body, callback);
   },
 
   reorder: function(req, res) {
     function callback(err, data) {
       Config.globalCallback(err,data,res);
     }
-    PhotoGalleryCategory.reorder(data, callback);
+    PhotoGalleryCategory.reorder(req.body, callback);
   }
 };

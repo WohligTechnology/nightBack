@@ -18,20 +18,20 @@ module.exports = {
 		function callback(err, data) {
       Config.globalCallback(err,data,res);
     }
-    Contact.getAll(data, callback);
+    Contact.getAll(req.body, callback);
   },
 
   getAll: function (req, res) {
 		function callback(err, data) {
       Config.globalCallback(err,data,res);
     }
-    Contact.getOne(data, callback);
+    Contact.getOne(req.body, callback);
   },
 
   reorder: function(req, res) {
     function callback(err, data) {
       Config.globalCallback(err,data,res);
     }
-    Contact.reorder(data, callback);
+    Contact.reorder(req.body, callback);
   }
 };

@@ -18,20 +18,20 @@ module.exports = {
 		function callback(err, data) {
       Config.globalCallback(err,data,res);
     }
-    AudioGalleryCategory.getAll(data, callback);
+    AudioGalleryCategory.getAll(req.body, callback);
   },
 
   getAll: function (req, res) {
 		function callback(err, data) {
       Config.globalCallback(err,data,res);
     }
-    AudioGalleryCategory.getOne(data, callback);
+    AudioGalleryCategory.getOne(req.body, callback);
   },
 
   reorder: function(req, res) {
     function callback(err, data) {
       Config.globalCallback(err,data,res);
     }
-    AudioGalleryCategory.reorder(data, callback);
+    AudioGalleryCategory.reorder(req.body, callback);
   }
 };

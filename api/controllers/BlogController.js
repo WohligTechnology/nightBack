@@ -18,13 +18,13 @@ module.exports = {
 		function callback(err, data) {
       Config.globalCallback(err,data,res);
     }
-    Blog.getAll(data, callback);
+    Blog.getAll(req.body, callback);
   },
 
   getAll: function (req, res) {
 		function callback(err, data) {
       Config.globalCallback(err,data,res);
     }
-    Blog.getOne(data, callback);
+    Blog.getOne(req.body, callback);
   }
 };
