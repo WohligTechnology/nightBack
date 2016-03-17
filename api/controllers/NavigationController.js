@@ -18,14 +18,14 @@ module.exports = {
         function callback(err, data) {
             Config.globalCallback(err, data, res);
         }
-        Navigation.getAll(req.body, callback);
+        Navigation.getOne(req.body, callback);
     },
 
     getAll: function (req, res) {
         function callback(err, data) {
             Config.globalCallback(err, data, res);
         }
-        Navigation.getOne(req.body, callback);
+        Navigation.getAll(req.body, callback);
     },
 
     reorder: function (req, res) {
