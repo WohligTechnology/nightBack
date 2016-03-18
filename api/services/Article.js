@@ -8,7 +8,7 @@ var schema = new Schema({
     type: [String],
     index: true
   },
-  status: Number,
+  status: String,
   views: Number,
   modificationTime: Date
 });

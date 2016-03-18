@@ -16,11 +16,12 @@ var models = {
   saveData: function(data, callback) {
     var project = this(data);
     if (data._id) {
+        data.modificationTime=new Date();
       this.findOneAndUpdate({
         _id: data._id
       }, data, callback);
     } else {
-      this.save(function(err, data) {
+      project.save(function(err, data) {
         if (err) {
           callback(err, false);
         } else {
