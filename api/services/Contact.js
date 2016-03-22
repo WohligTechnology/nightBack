@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 var schema = new Schema({
   title: String,
   address: String,
-  emil: String,
+  email: String,
   lat: Number,
   long: Number,
   modificationTime: Date,
@@ -16,11 +16,12 @@ var models = {
   saveData: function(data, callback) {
     var project = this(data);
     if (data._id) {
+        data.modificationTime=new Date();
       this.findOneAndUpdate({
         _id: data._id
       }, data, callback);
     } else {
-      this.save(function(err, data) {
+      project.save(function(err, data) {
         if (err) {
           callback(err, false);
         } else {
