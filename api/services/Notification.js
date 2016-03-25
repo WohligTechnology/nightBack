@@ -8,7 +8,8 @@ var schema = new Schema({
     json: Schema.Types.Mixed,
     modificationTime: Date,
     sendingTime: Date,
-    status: Number
+    status: Number,
+    image: String
 });
 
 module.exports = mongoose.model('Notification', schema);
