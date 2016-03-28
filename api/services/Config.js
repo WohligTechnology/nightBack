@@ -8,7 +8,7 @@
 var mongoose = require('mongoose');
 var Grid = require('gridfs-stream');
 var fs = require("fs");
-//var lwip = require("lwip");
+var lwip = require("lwip");
 var MaxImageSize = 1200;
 
 var gfs = Grid(mongoose.connections[0].db, mongoose);
