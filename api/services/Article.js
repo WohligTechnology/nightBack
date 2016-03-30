@@ -4,6 +4,7 @@ var Schema = mongoose.Schema;
 var schema = new Schema({
   name: String,
   content: String,
+image: String,
   tags: {
     type: [String],
     index: true
