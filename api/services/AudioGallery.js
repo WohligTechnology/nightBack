@@ -2,55 +2,56 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
-  title: String,
-  audio: String,
-  order: Number,
-  modificationTime: Date,
-  category: {
-    type: Schema.Types.ObjectId,
-    ref: 'AudioGalleryCategory'
-  },
-  status: Number
+    title: String,
+    audio: String,
+    order: Number,
+    modificationTime: Date,
+    category: {
+        type: Schema.Types.ObjectId,
+        ref: 'AudioGalleryCategory'
+    },
+    status: Number
 });
 
 module.exports = mongoose.model('AudioGallery', schema);
 var models = {
-  saveData: function(data, callback) {
-    var project = this(data);
-    if (data._id) {
-      this.findOneAndUpdate({
-        _id: data._id
-      }, data, callback);
-    } else {
-      this.save(function(err, data) {
-        if (err) {
-          callback(err, false);
+    saveData: function(data, callback) {
+        var project = this(data);
+        if (data._id) {
+            data.modificationTime = new Date();
+            this.findOneAndUpdate({
+                _id: data._id
+            }, data, callback);
         } else {
-          callback(null, data);
+            project.save(function(err, data) {
+                if (err) {
+                    callback(err, false);
+                } else {
+                    callback(null, data);
+                }
+            });
         }
-      });
-    }
-  },
-  deleteData: function(data, callback) {
-    this.findOneAndRemove({
-      _id: data._id
-    }, function(err, data) {
+    },
+    deleteData: function(data, callback) {
+        this.findOneAndRemove({
+            _id: data._id
+        }, function(err, data) {
 
-      if (err) {
-        callback(err, false);
-      } else {
-        callback(null, data);
-      }
-    });
-  },
-  getAll: function(data, callback) {
-    this.find().exec(callback);
-  },
-  getOne: function(data, callback) {
-    this.findOne({
-      "_id": data._id
-    }).exec(callback);
-  }
+            if (err) {
+                callback(err, false);
+            } else {
+                callback(null, data);
+            }
+        });
+    },
+    getAll: function(data, callback) {
+        this.find().exec(callback);
+    },
+    getOne: function(data, callback) {
+        this.findOne({
+            "_id": data._id
+        }).exec(callback);
+    }
 };
 
 module.exports = _.assign(module.exports, models);

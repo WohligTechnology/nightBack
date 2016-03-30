@@ -1,37 +1,68 @@
 module.exports = {
-
-    save: function (req, res) {
+    save: function(req, res) {
         function callback(err, data) {
             Config.GlobalCallback(err, data, res);
         }
-        Navigation.saveData(req.body, callback);
+        if (req.body) {
+            Navigation.saveData(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
     },
-
-    delete: function (req, res) {
+    delete: function(req, res) {
         function callback(err, data) {
             Config.GlobalCallback(err, data, res);
         }
-        Navigation.deleteData(req.body, callback);
+        if (req.body) {
+            if (req.body._id && req.body._id != "") {
+                Navigation.deleteData(req.body, callback);
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid Id"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
     },
-
-    get: function (req, res) {
+    getOne: function(req, res) {
         function callback(err, data) {
             Config.GlobalCallback(err, data, res);
         }
-        Navigation.getOne(req.body, callback);
+        if (req.body) {
+            if (req.body._id && req.body._id != "") {
+                Navigation.getOne(req.body, callback);
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid Id"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
     },
-
-    getAll: function (req, res) {
+    getAll: function(req, res) {
         function callback(err, data) {
             Config.GlobalCallback(err, data, res);
         }
-        Navigation.getAll(req.body, callback);
-    },
-
-    reorder: function (req, res) {
-        function callback(err, data) {
-            Config.GlobalCallback(err, data, res);
+        if (req.body) {
+            Navigation.getAll(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
         }
-        Navigation.reorder(req.body, callback);
     }
 };

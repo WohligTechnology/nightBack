@@ -1,37 +1,68 @@
 module.exports = {
-
-  save: function (req, res) {
-		function callback(err, data) {
-      Config.GlobalCallback(err,data,res);
+    save: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            IntroSlider.saveData(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    delete: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            if (req.body._id && req.body._id != "") {
+                IntroSlider.deleteData(req.body, callback);
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid Id"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    getOne: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            if (req.body._id && req.body._id != "") {
+                IntroSlider.getOne(req.body, callback);
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid Id"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    getAll: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            IntroSlider.getAll(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
     }
-    IntroSlider.saveData(req.body, callback);
-  },
-
-  delete: function (req, res) {
-		function callback(err, data) {
-      Config.GlobalCallback(err,data,res);
-    }
-    IntroSlider.deleteData(req.body, callback);
-  },
-
-  get: function (req, res) {
-		function callback(err, data) {
-      Config.GlobalCallback(err,data,res);
-    }
-    IntroSlider.getAll(req.body, callback);
-  },
-
-  getAll: function (req, res) {
-		function callback(err, data) {
-      Config.GlobalCallback(err,data,res);
-    }
-    IntroSlider.getOne(req.body, callback);
-  },
-
-  reorder: function(req, res) {
-    function callback(err, data) {
-      Config.GlobalCallback(err,data,res);
-    }
-    IntroSlider.reorder(req.body, callback);
-  }
 };

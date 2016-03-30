@@ -14,14 +14,15 @@ var schema = new Schema({
 
 module.exports = mongoose.model('Navigation', schema);
 var models = {
-    saveData: function (data, callback) {
+    saveData: function(data, callback) {
         var project = this(data);
         if (data._id) {
+            data.modificationTime = new Date();
             this.findOneAndUpdate({
                 _id: data._id
             }, data, callback);
         } else {
-            project.save(function (err, data2) {
+            project.save(function(err, data2) {
                 if (err) {
                     callback(err, false);
                 } else {
@@ -30,10 +31,10 @@ var models = {
             });
         }
     },
-    deleteData: function (data, callback) {
+    deleteData: function(data, callback) {
         this.findOneAndRemove({
             _id: data._id
-        }, function (err, data) {
+        }, function(err, data) {
 
             if (err) {
                 callback(err, false);
@@ -42,10 +43,10 @@ var models = {
             }
         });
     },
-    getAll: function (data, callback) {
+    getAll: function(data, callback) {
         this.find().exec(callback);
     },
-    getOne: function (data, callback) {
+    getOne: function(data, callback) {
         this.findOne({
             "_id": data._id
         }).exec(callback);

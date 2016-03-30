@@ -5,6 +5,7 @@
   "description": "a Sails application",
   "keywords": [],
   "dependencies": {
+    "apns": "^0.1.0",
     "ejs": "2.3.4",
     "gridfs-stream": "^1.1.1",
     "grunt": "0.4.5",
@@ -26,6 +27,7 @@
     "moment": "^2.10.6",
     "mongodb": "^2.1.7",
     "mongoose": "^4.3.3",
+    "node-gcm": "^0.14.0",
     "passport": "^0.3.2",
     "passport-facebook": "^2.0.0",
     "passport-google-oauth": "^0.2.0",
