@@ -7,16 +7,7 @@ var schema = new Schema({
     order: Number,
     modificationTime: Date,
     index: Number,
-    images: {
-        type: [{
-            image: String,
-            title: String,
-            type: String,
-            link: String,
-            status: Boolean
-        }],
-        index: true
-    },
+    images: Schema.Types.Mixed,
     category: {
         type: Schema.Types.ObjectId,
         ref: 'PhotoGalleryCategory'
