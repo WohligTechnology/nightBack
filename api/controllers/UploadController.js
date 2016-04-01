@@ -14,17 +14,23 @@ module.exports = {
         req.file("file").upload({
             maxBytes: 10000000 // 10 MB Storage 1 MB = 10^6
         }, function(err, uploadedFile) {
-            console.log(uploadedFile);
-            async.each(uploadedFile, function(n, callback) {
-                Config.uploadFile(n.fd, function(err, value) {
-                    if (err) {
-                        callback(err);
-                    } else {
-                        fileNames.push(value.name);
-                        callback(null);
-                    }
+            if (uploadedFile && uploadedFile.length > 0) {
+                async.each(uploadedFile, function(n, callback) {
+                    Config.uploadFile(n.fd, function(err, value) {
+                        if (err) {
+                            callback(err);
+                        } else {
+                            fileNames.push(value.name);
+                            callback(null);
+                        }
+                    });
+                }, callback2);
+            } else {
+                callback2(null, {
+                    value: false,
+                    data: "No files selected"
                 });
-            }, callback2);
+            }
         });
     },
     readFile: function(req, res) {
