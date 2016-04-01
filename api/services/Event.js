@@ -41,15 +41,10 @@ var models = {
     saveData: function(data, callback) {
         var project = this(data);
         if (data._id) {
-            data.modificationTime = new Date();
-            data.startTime = new Date(data.startTime);
-            data.endTime = new Date(data.endTime);
             this.findOneAndUpdate({
                 _id: data._id
             }, data, callback);
         } else {
-            project.startTime = new Date();
-            project.endTime = new Date(project.endTime);
             project.save(function(err, data) {
                 if (err) {
                     callback(err, false);

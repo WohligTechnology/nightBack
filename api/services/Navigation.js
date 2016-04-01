@@ -9,7 +9,9 @@ var schema = new Schema({
     order: Number,
     link: String,
     modificationTime: Date,
-    status: Number
+    status: Number,
+    index: Number,
+    default: Boolean
 });
 
 module.exports = mongoose.model('Navigation', schema);
@@ -17,7 +19,6 @@ var models = {
     saveData: function(data, callback) {
         var project = this(data);
         if (data._id) {
-            data.modificationTime = new Date();
             this.findOneAndUpdate({
                 _id: data._id
             }, data, callback);
@@ -35,7 +36,6 @@ var models = {
         this.findOneAndRemove({
             _id: data._id
         }, function(err, data) {
-
             if (err) {
                 callback(err, false);
             } else {
@@ -44,12 +44,62 @@ var models = {
         });
     },
     getAll: function(data, callback) {
-        this.find().exec(callback);
+        this.find().sort({
+            index: 1
+        }).exec(callback);
     },
     getOne: function(data, callback) {
         this.findOne({
             "_id": data._id
         }).exec(callback);
+    },
+    sort: function(data, callback) {
+        if (data && data.length > 0) {
+            function callSave(num) {
+                Navigation.saveData({
+                    _id: data[num]._id,
+                    index: num + 1
+                }, function(err, respo) {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        num++;
+                        if (num == data.length) {
+                            callback(null, { comment: "Data sorted" });
+                        } else {
+                            callSave(num);
+                        }
+                    }
+                });
+            }
+            callSave(0);
+        } else {
+            callback(null, {});
+        }
+    },
+    setDefault: function(data, callback) {
+        Navigation.update({}, {
+            $set: {
+                default: false
+            }
+        }, {
+            multi: true
+        }, function(err, data2) {
+            if (err) {
+                callback(err, null);
+            } else {
+                Navigation.saveData({
+                    _id: data._id,
+                    default: true
+                }, function(err, data3) {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        callback(null, { comment: "Default has been set" });
+                    }
+                });
+            }
+        });
     }
 };
 

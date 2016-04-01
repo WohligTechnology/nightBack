@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
+    blogtitle: String,
     name: String,
     image: String,
     tags: {
@@ -29,6 +30,7 @@ var schema = new Schema({
         index: true
     },
     content: String,
+    date: Date,
     modificationTime: Date,
     status: Number
 });
@@ -42,7 +44,7 @@ var models = {
                 _id: data._id
             }, data, callback);
         } else {
-            this.save(function(err, data) {
+            project.save(function(err, data) {
                 if (err) {
                     callback(err, false);
                 } else {

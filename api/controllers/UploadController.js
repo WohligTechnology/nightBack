@@ -14,6 +14,7 @@ module.exports = {
         req.file("file").upload({
             maxBytes: 10000000 // 10 MB Storage 1 MB = 10^6
         }, function(err, uploadedFile) {
+            console.log(uploadedFile);
             async.each(uploadedFile, function(n, callback) {
                 Config.uploadFile(n.fd, function(err, value) {
                     if (err) {

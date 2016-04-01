@@ -28,42 +28,6 @@ module.exports = {
             });
         }
     },
-    saveData: function(data, callback) {
-        var project = this(data);
-        if (data._id) {
-            this.findOneAndUpdate({
-                _id: data._id
-            }, data, callback);
-        } else {
-            this.save(function(err, data) {
-                if (err) {
-                    callback(err, false);
-                } else {
-                    callback(null, data);
-                }
-            });
-        }
-    },
-    deleteData: function(data, callback) {
-        this.findOneAndRemove({
-            _id: data._id
-        }, function(err, data) {
-
-            if (err) {
-                callback(err, false);
-            } else {
-                callback(null, data);
-            }
-        });
-    },
-    getAll: function(data, callback) {
-        this.find().exec(callback);
-    },
-    getOne: function(data, callback) {
-        this.findOne({
-            "_id": data._id
-        }).exec(callback);
-    },
     uploadFile: function(filename, callback) {
         var id = mongoose.Types.ObjectId();
         var extension = filename.split(".").pop();
@@ -268,5 +232,41 @@ module.exports = {
             readstream.pipe(res);
         }
         //error handling, e.g. file does not exist
-    }
+    },
+    saveData: function(data, callback) {
+        var project = this(data);
+        if (data._id) {
+            this.findOneAndUpdate({
+                _id: data._id
+            }, data, callback);
+        } else {
+            this.save(function(err, data) {
+                if (err) {
+                    callback(err, false);
+                } else {
+                    callback(null, data);
+                }
+            });
+        }
+    },
+    deleteData: function(data, callback) {
+        this.findOneAndRemove({
+            _id: data._id
+        }, function(err, data) {
+
+            if (err) {
+                callback(err, false);
+            } else {
+                callback(null, data);
+            }
+        });
+    },
+    getAll: function(data, callback) {
+        this.find().exec(callback);
+    },
+    getOne: function(data, callback) {
+        this.findOne({
+            "_id": data._id
+        }).exec(callback);
+    },
 };

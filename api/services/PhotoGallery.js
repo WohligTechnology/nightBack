@@ -3,14 +3,26 @@ var Schema = mongoose.Schema;
 
 var schema = new Schema({
     title: String,
-    image: String,
+    icon: String,
     order: Number,
     modificationTime: Date,
+    index: Number,
+    images: {
+        type: [{
+            image: String,
+            title: String,
+            type: String,
+            link: String,
+            status: Boolean
+        }],
+        index: true
+    },
     category: {
         type: Schema.Types.ObjectId,
         ref: 'PhotoGalleryCategory'
     },
-    status: Number
+    status: String,
+    date: Date
 });
 
 module.exports = mongoose.model('PhotoGallery', schema);
@@ -18,7 +30,6 @@ var models = {
     saveData: function(data, callback) {
         var project = this(data);
         if (data._id) {
-            data.modificationTime = new Date();
             this.findOneAndUpdate({
                 _id: data._id
             }, data, callback);

@@ -16,7 +16,6 @@ var models = {
     saveData: function(data, callback) {
         var project = this(data);
         if (data._id) {
-            data.modificationTime = new Date();
             this.findOneAndUpdate({
                 _id: data._id
             }, data, callback);

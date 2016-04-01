@@ -4,11 +4,11 @@ var Schema = mongoose.Schema;
 var schema = new Schema({
     content: String,
     link: String,
-    type: Number,
+    type: String,
     json: Schema.Types.Mixed,
     modificationTime: Date,
     sendingTime: Date,
-    status: Number,
+    status: Boolean,
     image: String
 });
 
@@ -17,13 +17,10 @@ var models = {
     saveData: function(data, callback) {
         var project = this(data);
         if (data._id) {
-            data.modificationTime = new Date();
-            data.sendingTime = new Date(data.sendingTime);
             this.findOneAndUpdate({
                 _id: data._id
             }, data, callback);
         } else {
-            project.sendingTime = new Date();
             project.save(function(err, data) {
                 if (err) {
                     callback(err, false);

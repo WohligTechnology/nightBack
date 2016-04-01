@@ -7,8 +7,9 @@ var schema = new Schema({
     order: Number,
     link: String,
     type: String,
+    index: Number,
     modificationTime: Date,
-    status: Number
+    status: Boolean
 });
 
 module.exports = mongoose.model('HomeSlider', schema);
@@ -16,7 +17,6 @@ var models = {
     saveData: function(data, callback) {
         var project = this(data);
         if (data._id) {
-            data.modificationTime = new Date();
             this.findOneAndUpdate({
                 _id: data._id
             }, data, callback);
@@ -43,13 +43,58 @@ var models = {
         });
     },
     getAll: function(data, callback) {
-        this.find().exec(callback);
+        this.find().sort({ index: 1 }).exec(callback);
     },
     getOne: function(data, callback) {
         this.findOne({
             "_id": data._id
         }).exec(callback);
-    }
+    },
+    insertData: function(data, callback) {
+        if (data && data.length > 0) {
+            function callSave(num) {
+                HomeSlider.saveData(data[num], function(err, respo) {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        num++;
+                        if (num == data.length) {
+                            callback(null, { comment: "Data saved" });
+                        } else {
+                            callSave(num);
+                        }
+                    }
+                });
+            }
+            callSave(0);
+        } else {
+            callback(null, {});
+        }
+    },
+    sort: function(data, callback) {
+        if (data && data.length > 0) {
+            function callSave(num) {
+                HomeSlider.saveData({
+                    _id: data[num]._id,
+                    index: num + 1
+                }, function(err, respo) {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        num++;
+                        if (num == data.length) {
+                            callback(null, { comment: "Data sorted" });
+                        } else {
+                            callSave(num);
+                        }
+                    }
+                });
+            }
+            callSave(0);
+        } else {
+            callback(null, {});
+        }
+    },
 };
 
 module.exports = _.assign(module.exports, models);
