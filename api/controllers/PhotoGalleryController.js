@@ -64,5 +64,18 @@ module.exports = {
                 data: "Invalid call"
             });
         }
-    }
+    },
+    sort: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            PhotoGallery.sort(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
 };

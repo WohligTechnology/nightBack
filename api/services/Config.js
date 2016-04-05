@@ -14,7 +14,15 @@ var MaxImageSize = 1200;
 var gfs = Grid(mongoose.connections[0].db, mongoose);
 gfs.mongo = mongoose.mongo;
 
-module.exports = {
+var Schema = mongoose.Schema;
+var schema = new Schema({
+    homeContent: String,
+    login: Schema.Types.Mixed,
+    blog: Schema.Types.Mixed
+});
+module.exports = mongoose.model('Config', schema);
+
+var models = {
     GlobalCallback: function(err, data, res) {
         if (err) {
             res.json({
@@ -240,7 +248,7 @@ module.exports = {
                 _id: data._id
             }, data, callback);
         } else {
-            this.save(function(err, data) {
+            project.save(function(err, data) {
                 if (err) {
                     callback(err, false);
                 } else {
@@ -253,7 +261,6 @@ module.exports = {
         this.findOneAndRemove({
             _id: data._id
         }, function(err, data) {
-
             if (err) {
                 callback(err, false);
             } else {
@@ -269,4 +276,91 @@ module.exports = {
             "_id": data._id
         }).exec(callback);
     },
+    getData: function(data, callback) {
+        var newreturns = {};
+        async.parallel([
+            function(callback) {
+                HomeSlider.getAll(data, function(err, data1) {
+                    if (err) {
+                        newreturns.home = [];
+                        callback(null, newreturns);
+                    } else if (data1 && data1.length > 0) {
+                        newreturns.home = data1;
+                        callback(null, newreturns);
+                    } else {
+                        newreturns.home = [];
+                        callback(null, newreturns);
+                    }
+                });
+            },
+            function(callback) {
+                Blog.getAll(data, function(err, data2) {
+                    if (err) {
+                        console.log(err);
+                        newreturns.blog = [];
+                        callback(null, newreturns);
+                    } else if (data2 && data2.length > 0) {
+                        newreturns.blog = data2;
+                        callback(null, newreturns);
+                    } else {
+                        newreturns.blog = [];
+                        callback(null, newreturns);
+                    }
+                });
+            },
+            function(callback) {
+                Event.getAll(data, function(err, data3) {
+                    if (err) {
+                        console.log(err);
+                        newreturns.event = [];
+                        callback(null, newreturns);
+                    } else if (data3 && data3.length > 0) {
+                        newreturns.event = data3;
+                        callback(null, newreturns);
+                    } else {
+                        newreturns.event = [];
+                        callback(null, newreturns);
+                    }
+                });
+            },
+            function(callback) {
+                PhotoGallery.getAll(data, function(err, data4) {
+                    if (err) {
+                        console.log(err);
+                        newreturns.photo = [];
+                        callback(null, newreturns);
+                    } else if (data4 && data4.length > 0) {
+                        newreturns.photo = data4;
+                        callback(null, newreturns);
+                    } else {
+                        newreturns.photo = [];
+                        callback(null, newreturns);
+                    }
+                });
+            },
+            function(callback) {
+                VideoGallery.getAll(data, function(err, data5) {
+                    if (err) {
+                        console.log(err);
+                        newreturns.video = [];
+                        callback(null, newreturns);
+                    } else if (data5 && data5.length > 0) {
+                        newreturns.video = data5;
+                        callback(null, newreturns);
+                    } else {
+                        newreturns.video = [];
+                        callback(null, newreturns);
+                    }
+                });
+            }
+        ], function(err, data6) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                callback(null, newreturns);
+            }
+        });
+    }
 };
+module.exports = _.assign(module.exports, models);

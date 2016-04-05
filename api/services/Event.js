@@ -8,26 +8,8 @@ var schema = new Schema({
         type: [String],
         index: true
     },
-    images: {
-        type: [{
-            image: String,
-            title: String,
-            order: Number,
-            status: Number,
-            modificationTime: Date
-        }],
-        index: true
-    },
-    videos: {
-        type: [{
-            video: String,
-            title: String,
-            order: Number,
-            status: Number,
-            modificationTime: Date
-        }],
-        index: true
-    },
+    images: Schema.Types.Mixed,
+    videos: Schema.Types.Mixed,
     venue: String,
     startTime: Date,
     endTime: Date,

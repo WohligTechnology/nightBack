@@ -6,6 +6,9 @@ var schema = new Schema({
     video: String,
     order: Number,
     modificationTime: Date,
+    image: String,
+    index: Number,
+    videos: Schema.Types.Mixed,
     category: {
         type: Schema.Types.ObjectId,
         ref: 'VideoGalleryCategory'
@@ -44,13 +47,39 @@ var models = {
         });
     },
     getAll: function(data, callback) {
-        this.find().exec(callback);
+        this.find().sort({
+            index: 1
+        }).exec(callback);
     },
     getOne: function(data, callback) {
         this.findOne({
             "_id": data._id
         }).exec(callback);
-    }
+    },
+    sort: function(data, callback) {
+        if (data && data.length > 0) {
+            function callSave(num) {
+                VideoGallery.saveData({
+                    _id: data[num]._id,
+                    index: num + 1
+                }, function(err, respo) {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        num++;
+                        if (num == data.length) {
+                            callback(null, { comment: "Data sorted" });
+                        } else {
+                            callSave(num);
+                        }
+                    }
+                });
+            }
+            callSave(0);
+        } else {
+            callback(null, {});
+        }
+    },
 };
 
 module.exports = _.assign(module.exports, models);

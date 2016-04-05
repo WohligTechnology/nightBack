@@ -5,6 +5,7 @@ var schema = new Schema({
     name: String,
     image: String,
     order: Number,
+    index: Number,
     link: String,
     type: String,
     content: String,
@@ -43,13 +44,58 @@ var models = {
         });
     },
     getAll: function(data, callback) {
-        this.find().exec(callback);
+        this.find().sort({ index: 1 }).exec(callback);
     },
     getOne: function(data, callback) {
         this.findOne({
             "_id": data._id
         }).exec(callback);
-    }
+    },
+    insertData: function(data, callback) {
+        if (data && data.length > 0) {
+            function callSave(num) {
+                IntroSlider.saveData(data[num], function(err, respo) {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        num++;
+                        if (num == data.length) {
+                            callback(null, { comment: "Data saved" });
+                        } else {
+                            callSave(num);
+                        }
+                    }
+                });
+            }
+            callSave(0);
+        } else {
+            callback(null, {});
+        }
+    },
+    sort: function(data, callback) {
+        if (data && data.length > 0) {
+            function callSave(num) {
+                IntroSlider.saveData({
+                    _id: data[num]._id,
+                    index: num + 1
+                }, function(err, respo) {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        num++;
+                        if (num == data.length) {
+                            callback(null, { comment: "Data sorted" });
+                        } else {
+                            callSave(num);
+                        }
+                    }
+                });
+            }
+            callSave(0);
+        } else {
+            callback(null, {});
+        }
+    },
 };
 
 module.exports = _.assign(module.exports, models);

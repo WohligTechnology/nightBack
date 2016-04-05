@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
-    title: String,
+    username: String,
     audio: String,
     order: Number,
     modificationTime: Date,
