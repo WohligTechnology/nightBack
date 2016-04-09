@@ -49,7 +49,7 @@ module.exports = {
                 });
             }
         };
-        Passport.authenticate('local', {
+        passport.authenticate('local', {
             failureRedirect: '/login'
         }, callback)(req, res);
     },
@@ -88,7 +88,7 @@ module.exports = {
                 });
             }
         };
-        Passport.authenticate('facebook', {
+        passport.authenticate('facebook', {
             scope: ['public_profile', 'user_friends', 'email']
         }, callback)(req, res);
     },
@@ -124,7 +124,7 @@ module.exports = {
                 });
             }
         };
-        Passport.authenticate('twitter', {}, callback)(req, res);
+        passport.authenticate('twitter', {}, callback)(req, res);
     },
 
     loginTwitterCallback: function(req, res) {
@@ -149,10 +149,10 @@ module.exports = {
                 });
             }
         };
-        Passport.authenticate('twitter', {}, callback)(req, res);
+        passport.authenticate('twitter', {}, callback)(req, res);
     },
     loginGoogle: function(req, res) {
-        Passport.authenticate('google', {
+        passport.authenticate('google', {
             scope: ['https://www.googleapis.com/auth/plus.login']
         })(req, res);
     },
@@ -178,7 +178,7 @@ module.exports = {
                 });
             }
         };
-        Passport.authenticate('google', {
+        passport.authenticate('google', {
             failureRedirect: '/login'
         }, callback)(req, res);
     },
