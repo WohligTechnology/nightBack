@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var objid = require('mongodb').ObjectID;
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
@@ -78,6 +79,90 @@ var models = {
             callback(null, {});
         }
     },
+    ///////////////////////////////////MOBILE
+    getAllMob: function(data, callback) {
+        var newreturns = {};
+        newreturns.data = [];
+        data.pagenumber = parseInt(data.pagenumber);
+        data.pagesize = parseInt(data.pagesize);
+        this.find({}, {
+            images: 0
+        }).sort({
+            index: 1
+        }).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else if (data2 && data2.length > 0) {
+                newreturns.data = data2;
+                newreturns.totalpages = Math.ceil(data2.length / data.pagesize);
+                newreturns.pageno = data.pagenumber;
+                callback(null, newreturns);
+            } else {
+                callback(null, newreturns);
+            }
+        });
+    },
+    getOneMob: function(data, callback) {
+        data.pagesize = parseInt(data.pagesize);
+        data.pagenumber = parseInt(data.pagenumber);
+        var newreturns = {};
+        newreturns.data = [];
+        var skip = data.pagesize * (data.pagenumber - 1);
+        VideoGallery.aggregate([{
+            $match: {
+                _id: objid(data._id)
+            }
+        }, {
+            $unwind: "$images"
+        }, {
+            $match: {
+                "images.status": true
+            }
+        }, {
+            $group: {
+                _id: "_id",
+                images: {
+                    $addToSet: "$images"
+                }
+            }
+        }, {
+            $project: {
+                _id: 0,
+                images: { $slice: ["$images", skip, data.pagesize] }
+            }
+        }]).exec(function(err, data2) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else if (_.isEmpty(data2)) {
+                callback(null, newreturns);
+            } else {
+                newreturns.data = data2[0].images;
+                newreturns.pageno = data.pagenumber;
+                callback(null, newreturns);
+            }
+        });
+    },
+    searchData: function(data, callback) {
+        var check = new RegExp(data.search, "i");
+        this.find({
+            title: {
+                '$regex': check
+            }
+        }, {
+            _id: 1,
+            title: 1
+        }, {
+            limit: 10
+        }, function(err, data2) {
+            if (err) {
+                callback(err, null);
+            } else {
+                callback(null, data2);
+            }
+        });
+    }
 };
 
 module.exports = _.assign(module.exports, models);

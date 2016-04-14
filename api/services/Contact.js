@@ -48,6 +48,41 @@ var models = {
         this.findOne({
             "_id": data._id
         }).exec(callback);
+    },
+    /////////////////////////////////////MOBILE
+    getAllMob: function(data, callback) {
+        this.find().exec(callback);
+    },
+    searchData: function(data, callback) {
+        var check = new RegExp(data.search, "i");
+        this.find({
+            $or: [{
+                title: {
+                    '$regex': check
+                }
+            }, {
+                email: {
+                    '$regex': check
+                }
+            }, {
+                address: {
+                    '$regex': check
+                }
+            }]
+        }, {
+            _id: 1,
+            title: 1,
+            email: 1,
+            address: 1
+        }, {
+            limit: 10
+        }, function(err, data2) {
+            if (err) {
+                callback(err, null);
+            } else {
+                callback(null, data2);
+            }
+        });
     }
 };
 

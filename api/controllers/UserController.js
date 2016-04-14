@@ -17,7 +17,6 @@ module.exports = {
         });
     },
     register: function(req, res) {
-        req.body.status = 1;
         var callback = function(err, data) {
             if (err || _.isEmpty(data)) {
                 res.json({
@@ -41,17 +40,38 @@ module.exports = {
                     value: false
                 });
             } else {
-                req.session.user = data;
-                req.session.save();
+                if (data._id) {
+                    req.session.user = data;
+                    req.session.save();
+                    res.json({
+                        data: data,
+                        value: true
+                    });
+                } else {
+                    req.session.user = {};
+                    req.session.save();
+                    res.json({
+                        data: {},
+                        value: false
+                    });
+                }
+            }
+        };
+        if (req.body) {
+            if (req.body.email && req.body.email != "" && req.body.password && req.body.password != "") {
+                User.login(req.body, callback);
+            } else {
                 res.json({
-                    data: data,
+                    data: "Please provide params",
                     value: true
                 });
             }
-        };
-        passport.authenticate('local', {
-            failureRedirect: '/login'
-        }, callback)(req, res);
+        } else {
+            res.json({
+                data: "Invalid Call",
+                value: true
+            });
+        }
     },
     logout: function(req, res) {
         req.session.destroy(function(err) {
@@ -97,9 +117,7 @@ module.exports = {
         if (user) {
             res.json(user);
         } else {
-            res.json({
-                value: false
-            });
+            res.json({});
         }
     },
     loginTwitter: function(req, res) {
@@ -126,7 +144,6 @@ module.exports = {
         };
         passport.authenticate('twitter', {}, callback)(req, res);
     },
-
     loginTwitterCallback: function(req, res) {
         var callback = function(err, data) {
             if (err || _.isEmpty(data)) {
@@ -182,6 +199,128 @@ module.exports = {
             failureRedirect: '/login'
         }, callback)(req, res);
     },
+    //////////////////////////////MOBILE
+    saveMob: function(req, res) {
+        var callback = function(err, data) {
+            if (err || _.isEmpty(data)) {
+                res.json({
+                    error: err,
+                    value: false
+                });
+            } else {
+                req.session.user = data;
+                req.session.save();
+                res.json({
+                    data: data,
+                    value: true
+                });
+            }
+        };
+        if (req.body) {
+            if (req.body._id && req.body._id == "0") {
+                if (req.session.user) {
+                    req.body._id = req.session.user._id;
+                    callSave();
+                } else {
+                    res.json({
+                        value: false,
+                        data: "User not logged-in"
+                    });
+                }
+            } else {
+                callSave();
+            }
+
+            function callSave() {
+                User.saveMob(req.body, callback);
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    getOneMob: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            if (req.session.user) {
+                req.body._id = req.session.user._id;
+                User.getOneMob(req.body, callback);
+            } else {
+                res.json({
+                    value: false,
+                    data: "User not loggd-in"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    changePasswordMob: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            if (req.session.user) {
+                req.body._id = req.session.user._id;
+                if (req.body.password && req.body.password != "" && req.body.editpassword && req.body.editpassword != "") {
+                    User.changePasswordMob(req.body, callback);
+                } else {
+                    res.json({
+                        value: false,
+                        data: "Invalid Params"
+                    });
+                }
+            } else {
+                res.json({
+                    value: false,
+                    data: "User not loggd-in"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    forgotPassword: function(req, res) {
+        if (req.body) {
+            if (req.body.email && req.body.email != "") {
+                User.forgotPassword(req.body, res.callback);
+            } else {
+                res.json({
+                    value: false,
+                    data: "Please provide email-id"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid Call"
+            });
+        }
+    },
+    searchData: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            User.searchData(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    ///////////////////////////////
     test: function(req, res) {
         sails.log.error('Test is been Called');
         res.json({

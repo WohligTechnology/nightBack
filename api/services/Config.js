@@ -26,7 +26,7 @@ var schema = new Schema({
 module.exports = mongoose.model('Config', schema);
 
 var models = {
-    GlobalCallback: function (err, data, res) {
+    GlobalCallback: function(err, data, res) {
         if (err) {
             res.json({
                 error: err,
@@ -39,7 +39,7 @@ var models = {
             });
         }
     },
-    uploadFile: function (filename, callback) {
+    uploadFile: function(filename, callback) {
         var id = mongoose.Types.ObjectId();
         var extension = filename.split(".").pop();
         extension = extension.toLowerCase();
@@ -58,7 +58,7 @@ var models = {
                 filename: newFilename,
                 metadata: metaValue
             });
-            writestream2.on('finish', function () {
+            writestream2.on('finish', function() {
                 callback(null, {
                     name: newFilename
                 });
@@ -68,42 +68,57 @@ var models = {
         }
 
         if (extension == "png" || extension == "jpg" || extension == "gif") {
-            lwip.open(filename, extension, function (err, image) {
-                var upImage = {
-                    width: image.width(),
-                    height: image.height(),
-                    ratio: image.width() / image.height()
-                };
-
-                if (upImage.width > upImage.height) {
-                    if (upImage.width > MaxImageSize) {
-                        image.resize(MaxImageSize, MaxImageSize / (upImage.width / upImage.height), function (err, image2) {
-                            upImage = {
-                                width: image2.width(),
-                                height: image2.height(),
-                                ratio: image2.width() / image2.height()
-                            };
-                            image2.writeFile(filename, function (err) {
-                                writer2(upImage);
-                            });
-                        });
-                    } else {
-                        writer2(upImage);
-                    }
+            lwip.open(filename, extension, function(err, image) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
                 } else {
-                    if (upImage.height > MaxImageSize) {
-                        image.resize((upImage.width / upImage.height) * MaxImageSize, MaxImageSize, function (err, image2) {
-                            upImage = {
-                                width: image2.width(),
-                                height: image2.height(),
-                                ratio: image2.width() / image2.height()
-                            };
-                            image2.writeFile(filename, function (err) {
-                                writer2(upImage);
+                    var upImage = {
+                        width: image.width(),
+                        height: image.height(),
+                        ratio: image.width() / image.height()
+                    };
+
+                    if (upImage.width > upImage.height) {
+                        if (upImage.width > MaxImageSize) {
+                            image.resize(MaxImageSize, MaxImageSize / (upImage.width / upImage.height), function(err, image2) {
+                                if (err) {
+                                    console.log(err);
+                                    callback(err, null);
+                                } else {
+                                    upImage = {
+                                        width: image2.width(),
+                                        height: image2.height(),
+                                        ratio: image2.width() / image2.height()
+                                    };
+                                    image2.writeFile(filename, function(err) {
+                                        writer2(upImage);
+                                    });
+                                }
                             });
-                        });
+                        } else {
+                            writer2(upImage);
+                        }
                     } else {
-                        writer2(upImage);
+                        if (upImage.height > MaxImageSize) {
+                            image.resize((upImage.width / upImage.height) * MaxImageSize, MaxImageSize, function(err, image2) {
+                                if (err) {
+                                    console.log(err);
+                                    callback(err, null);
+                                } else {
+                                    upImage = {
+                                        width: image2.width(),
+                                        height: image2.height(),
+                                        ratio: image2.width() / image2.height()
+                                    };
+                                    image2.writeFile(filename, function(err) {
+                                        writer2(upImage);
+                                    });
+                                }
+                            });
+                        } else {
+                            writer2(upImage);
+                        }
                     }
                 }
             });
@@ -111,18 +126,18 @@ var models = {
             imageStream.pipe(writestream);
         }
 
-        writestream.on('finish', function () {
+        writestream.on('finish', function() {
             callback(null, {
                 name: newFilename
             });
             fs.unlink(filename);
         });
     },
-    readUploaded: function (filename, width, height, style, res) {
+    readUploaded: function(filename, width, height, style, res) {
         var readstream = gfs.createReadStream({
             filename: filename
         });
-        readstream.on('error', function (err) {
+        readstream.on('error', function(err) {
             res.json({
                 value: false,
                 error: err
@@ -134,7 +149,7 @@ var models = {
                 filename: gridFSFilename,
                 metadata: metaValue
             });
-            writestream2.on('finish', function () {
+            writestream2.on('finish', function() {
                 fs.unlink(filename);
             });
             fs.createReadStream(filename).pipe(res);
@@ -145,7 +160,7 @@ var models = {
             var readstream2 = gfs.createReadStream({
                 filename: filename2
             });
-            readstream2.on('error', function (err) {
+            readstream2.on('error', function(err) {
                 res.json({
                     value: false,
                     error: err
@@ -176,7 +191,7 @@ var models = {
             var newNameExtire = newName + "." + extension;
             gfs.exist({
                 filename: newNameExtire
-            }, function (err, found) {
+            }, function(err, found) {
                 if (err) {
                     res.json({
                         value: false,
@@ -188,8 +203,8 @@ var models = {
                 } else {
                     var imageStream = fs.createWriteStream('./.tmp/uploads/' + filename);
                     readstream.pipe(imageStream);
-                    imageStream.on("finish", function () {
-                        lwip.open('./.tmp/uploads/' + filename, function (err, image) {
+                    imageStream.on("finish", function() {
+                        lwip.open('./.tmp/uploads/' + filename, function(err, image) {
                             ImageWidth = image.width();
                             ImageHeight = image.height();
                             var newWidth = 0;
@@ -226,8 +241,8 @@ var models = {
                                 newWidth = height * (ImageWidth / ImageHeight);
                                 newHeight = height;
                             }
-                            image.resize(parseInt(newWidth), parseInt(newHeight), function (err, image2) {
-                                image2.writeFile('./.tmp/uploads/' + filename, function (err) {
+                            image.resize(parseInt(newWidth), parseInt(newHeight), function(err, image2) {
+                                image2.writeFile('./.tmp/uploads/' + filename, function(err) {
                                     writer2('./.tmp/uploads/' + filename, newNameExtire, {
                                         width: newWidth,
                                         height: newHeight
@@ -244,14 +259,14 @@ var models = {
         }
         //error handling, e.g. file does not exist
     },
-    saveData: function (data, callback) {
+    saveData: function(data, callback) {
         var project = this(data);
         if (data._id) {
             this.findOneAndUpdate({
                 _id: data._id
             }, data, callback);
         } else {
-            project.save(function (err, data) {
+            project.save(function(err, data) {
                 if (err) {
                     callback(err, false);
                 } else {
@@ -260,10 +275,10 @@ var models = {
             });
         }
     },
-    deleteData: function (data, callback) {
+    deleteData: function(data, callback) {
         this.findOneAndRemove({
             _id: data._id
-        }, function (err, data) {
+        }, function(err, data) {
             if (err) {
                 callback(err, false);
             } else {
@@ -271,19 +286,19 @@ var models = {
             }
         });
     },
-    getAll: function (data, callback) {
+    getAll: function(data, callback) {
         this.find().exec(callback);
     },
-    getOne: function (data, callback) {
+    getOne: function(data, callback) {
         this.findOne({
             "_id": data._id
         }).exec(callback);
     },
-    getData: function (data, callback) {
+    getData: function(data, callback) {
         var newreturns = {};
         async.parallel([
-            function (callback) {
-                HomeSlider.getAll(data, function (err, data1) {
+            function(callback) {
+                HomeSlider.getAll(data, function(err, data1) {
                     if (err) {
                         newreturns.home = [];
                         callback(null, newreturns);
@@ -296,8 +311,8 @@ var models = {
                     }
                 });
             },
-            function (callback) {
-                Blog.getAll(data, function (err, data2) {
+            function(callback) {
+                Blog.getAll(data, function(err, data2) {
                     if (err) {
                         console.log(err);
                         newreturns.blog = [];
@@ -311,8 +326,8 @@ var models = {
                     }
                 });
             },
-            function (callback) {
-                Event.getAll(data, function (err, data3) {
+            function(callback) {
+                Event.getAll(data, function(err, data3) {
                     if (err) {
                         console.log(err);
                         newreturns.event = [];
@@ -326,8 +341,8 @@ var models = {
                     }
                 });
             },
-            function (callback) {
-                PhotoGallery.getAll(data, function (err, data4) {
+            function(callback) {
+                PhotoGallery.getAll(data, function(err, data4) {
                     if (err) {
                         console.log(err);
                         newreturns.photo = [];
@@ -341,8 +356,8 @@ var models = {
                     }
                 });
             },
-            function (callback) {
-                VideoGallery.getAll(data, function (err, data5) {
+            function(callback) {
+                VideoGallery.getAll(data, function(err, data5) {
                     if (err) {
                         console.log(err);
                         newreturns.video = [];
@@ -356,12 +371,155 @@ var models = {
                     }
                 });
             }
-        ], function (err, data6) {
+        ], function(err, data6) {
             if (err) {
                 console.log(err);
                 callback(err, null);
             } else {
                 callback(null, newreturns);
+            }
+        });
+    },
+    searchData: function(data, callback) {
+        Config.find({}, function(err, data2) {
+            if (err) {
+                callback(err, null);
+            } else {
+                var i = 0;
+                var abc = [];
+                if (data2[0].search.length > 0) {
+                    _.each(data2[0].search, function(respo) {
+                        if (respo.enabled == true) {
+                            abc.push(respo.name);
+                        }
+                        i++;
+                        if (i == data2[0].search.length) {
+                            var newObj = {};
+                            async.each(abc, function(n, callback2) {
+                                if (n == "Articles") {
+                                    Article.searchData(data, function(err, search1) {
+                                        if (err) {
+                                            console.log(err);
+                                            newObj.article = [];
+                                            callback2(null, newObj);
+                                        } else {
+                                            newObj.article = search1;
+                                            callback2(null, newObj);
+                                        }
+                                    });
+                                } else if (n == "Home") {
+                                    HomeSlider.searchData(data, function(err, search3) {
+                                        if (err) {
+                                            console.log(err);
+                                            newObj.home = [];
+                                            callback2(null, newObj);
+                                        } else {
+                                            newObj.home = search3;
+                                            callback2(null, newObj);
+                                        }
+                                    });
+                                } else if (n == "Notifications") {
+                                    Notification.searchData(data, function(err, search4) {
+                                        if (err) {
+                                            console.log(err);
+                                            newObj.notification = [];
+                                            callback2(null, newObj);
+                                        } else {
+                                            newObj.notification = search4;
+                                            callback2(null, newObj);
+                                        }
+                                    });
+                                } else if (n == "Events") {
+                                    Event.searchData(data, function(err, search5) {
+                                        if (err) {
+                                            console.log(err);
+                                            newObj.event = [];
+                                            callback2(null, newObj);
+                                        } else {
+                                            newObj.event = search5;
+                                            callback2(null, newObj);
+                                        }
+                                    });
+                                } else if (n == "Blogs") {
+                                    Blog.searchData(data, function(err, search6) {
+                                        if (err) {
+                                            console.log(err);
+                                            newObj.blog = [];
+                                            callback2(null, newObj);
+                                        } else {
+                                            newObj.blog = search6;
+                                            callback2(null, newObj);
+                                        }
+                                    });
+                                } else if (n == "Photo Galleries") {
+                                    PhotoGallery.searchData(data, function(err, search7) {
+                                        if (err) {
+                                            console.log(err);
+                                            newObj.photo = [];
+                                            callback2(null, newObj);
+                                        } else {
+                                            newObj.photo = search7;
+                                            callback2(null, newObj);
+                                        }
+                                    });
+                                } else if (n == "Video Galleries") {
+                                    VideoGallery.searchData(data, function(err, search8) {
+                                        if (err) {
+                                            console.log(err);
+                                            newObj.video = [];
+                                            callback2(null, newObj);
+                                        } else {
+                                            newObj.video = search8;
+                                            callback2(null, newObj);
+                                        }
+                                    });
+                                } else if (n == "Contact") {
+                                    Contact.searchData(data, function(err, search9) {
+                                        if (err) {
+                                            console.log(err);
+                                            newObj.contact = [];
+                                            callback2(null, newObj);
+                                        } else {
+                                            newObj.contact = search9;
+                                            callback2(null, newObj);
+                                        }
+                                    });
+                                } else if (n == "Audio Gallery") {
+                                    AudioGallery.searchData(data, function(err, search10) {
+                                        if (err) {
+                                            console.log(err);
+                                            newObj.audio = [];
+                                            callback2(null, newObj);
+                                        } else {
+                                            newObj.audio = search10;
+                                            callback2(null, newObj);
+                                        }
+                                    });
+                                } else if (n == "Users") {
+                                    User.searchData(data, function(err, search11) {
+                                        if (err) {
+                                            console.log(err);
+                                            newObj.user = [];
+                                            callback2(null, newObj);
+                                        } else {
+                                            newObj.user = search11;
+                                            callback2(null, newObj);
+                                        }
+                                    });
+                                }
+                            }, function(err, respo) {
+                                if (err) {
+                                    console.log(err);
+                                    callback(err, null);
+                                } else {
+                                    callback(null, newObj);
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    callback(null, "Search not Configured");
+                }
             }
         });
     }

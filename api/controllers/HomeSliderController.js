@@ -92,6 +92,27 @@ module.exports = {
             });
         }
     },
+    /////////////////////////////////MOBILE
+    getOneMob: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            if (req.body._id && req.body._id != "") {
+                HomeSlider.getOneMob(req.body, callback);
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid Id"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
     ///////////////////////
     sendEmail: function(req, res) {
         sendgrid.send({
@@ -107,4 +128,17 @@ module.exports = {
             }
         });
     },
+    searchData: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            HomeSlider.searchData(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    }
 };

@@ -16,18 +16,35 @@ module.exports = mongoose.model('HomeSlider', schema);
 var models = {
     saveData: function(data, callback) {
         var project = this(data);
-        if (data._id) {
-            this.findOneAndUpdate({
-                _id: data._id
-            }, data, callback);
-        } else {
-            project.save(function(err, data) {
+
+        function callSave() {
+            if (data._id) {
+                HomeSlider.findOneAndUpdate({
+                    _id: data._id
+                }, data, callback);
+            } else {
+                project.save(function(err, data) {
+                    if (err) {
+                        callback(err, false);
+                    } else {
+                        callback(null, data);
+                    }
+                });
+            }
+        }
+        if (data.status && data.status == true) {
+            this.update({}, {
+                status: false
+            }, { multi: true }, function(err, updated) {
                 if (err) {
-                    callback(err, false);
+                    console.log(err);
+                    callback(err, null);
                 } else {
-                    callback(null, data);
+                    callSave();
                 }
             });
+        } else {
+            callSave();
         }
     },
     deleteData: function(data, callback) {
@@ -95,6 +112,32 @@ var models = {
             callback(null, {});
         }
     },
+    //////////////////////////////////////MOBILE
+    getOneMob: function(data, callback) {
+        this.findOne({
+            "_id": data._id,
+            status: true
+        }).exec(callback);
+    },
+    searchData: function(data, callback) {
+        var check = new RegExp(data.search, "i");
+        this.find({
+            name: {
+                '$regex': check
+            }
+        }, {
+            _id: 1,
+            name: 1
+        }, {
+            limit: 10
+        }, function(err, data2) {
+            if (err) {
+                callback(err, null);
+            } else {
+                callback(null, data2);
+            }
+        });
+    }
 };
 
 module.exports = _.assign(module.exports, models);

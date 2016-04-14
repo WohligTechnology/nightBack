@@ -91,5 +91,59 @@ module.exports = {
                 });
             }
         });
+    },
+    //////////////////////////////////MOBILE
+    getAllMob: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            if (req.body.pagenumber && req.body.pagesize) {
+                Notification.getAllMob(req.body, callback);
+            } else {
+                res.json({
+                    value: false,
+                    data: "Please provide params"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    getOneMob: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            if (req.body._id && req.body._id != "" && req.body.pagenumber && req.body.pagesize) {
+                Notification.getOneMob(req.body, callback);
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid Params"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    searchData: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            Notification.searchData(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
     }
 };

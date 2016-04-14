@@ -64,5 +64,32 @@ module.exports = {
                 data: "Invalid call"
             });
         }
+    },
+    /////////////////////////////////////MOBILE
+    getAllMob: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            Contact.getAllMob(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    searchData: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            Contact.searchData(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
     }
 };

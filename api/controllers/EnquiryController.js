@@ -1,5 +1,5 @@
 module.exports = {
-    save: function (req, res) {
+    save: function(req, res) {
         function callback(err, data) {
             Config.GlobalCallback(err, data, res);
         }
@@ -12,7 +12,7 @@ module.exports = {
             });
         }
     },
-    delete: function (req, res) {
+    delete: function(req, res) {
         function callback(err, data) {
             Config.GlobalCallback(err, data, res);
         }
@@ -32,7 +32,7 @@ module.exports = {
             });
         }
     },
-    getOne: function (req, res) {
+    getOne: function(req, res) {
         function callback(err, data) {
             Config.GlobalCallback(err, data, res);
         }
@@ -52,7 +52,7 @@ module.exports = {
             });
         }
     },
-    getAll: function (req, res) {
+    getAll: function(req, res) {
         function callback(err, data) {
             Config.GlobalCallback(err, data, res);
         }
@@ -64,5 +64,19 @@ module.exports = {
                 data: "Invalid call"
             });
         }
-    }
+    },
+    //////////////////////////////MOBILE
+    saveMob: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            Enquiry.saveMob(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
 };
