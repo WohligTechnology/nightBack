@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 var schema = new Schema({
     content: String,
-    link: String,
+    link: Schema.Types.Mixed,
     type: String,
     json: Schema.Types.Mixed,
     modificationTime: Date,

@@ -60,7 +60,8 @@ mongoose.connect('mongodb://localhost:27017/blazen', function(err, data) {
             console.error('To resolve this, run:');
             console.error('npm install rc --save');
             rc = function() {
-                return {}; };
+                return {};
+            };
         }
     }
 

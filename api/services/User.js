@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var md5 = require('md5');
 var Schema = mongoose.Schema;
+var sendgrid = require('sendgrid')('');
 
 var schema = new Schema({
     name: String,
@@ -9,6 +10,7 @@ var schema = new Schema({
     accessLevel: String,
     dob: Date,
     profilePic: String,
+    bannerPic: String,
     status: Number,
     phone: String,
     location: String,
@@ -149,19 +151,30 @@ var models = {
                 if (err) {
                     callback(err, false);
                 } else {
-                    data2.password = '';
-                    data2.forgotpassword = '';
-                    callback(null, data2);
+                    data.password = '';
+                    data.forgotpassword = '';
+                    callback(null, data);
                 }
             });
         } else {
-            project.save(function(err, data2) {
+            this.count({
+                "email": data.email
+            }).exec(function(err, data2) {
                 if (err) {
-                    callback(err, false);
+                    console.log(err);
+                    callback(err, null);
+                } else if (data2 === 0) {
+                    project.save(function(err, data2) {
+                        if (err) {
+                            callback(err, false);
+                        } else {
+                            data2.password = '';
+                            data2.forgotpassword = '';
+                            callback(null, data2);
+                        }
+                    });
                 } else {
-                    data2.password = '';
-                    data2.forgotpassword = '';
-                    callback(null, data2);
+                    callback("Email already Exists", false);
                 }
             });
         }
@@ -239,7 +252,8 @@ var models = {
                 callback(err, null);
             } else {
                 if (found) {
-                    if (!found.oauthLogin[0]) {
+                    console.log(found);
+                    if (!found.oauthLogin.length > 0) {
                         var text = "";
                         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
                         for (var i = 0; i < 8; i++) {
@@ -264,6 +278,7 @@ var models = {
                                     if (err) {
                                         callback(err, null);
                                     } else {
+                                        console.log(json);
                                         callback(null, {
                                             comment: "Mail Sent"
                                         });
