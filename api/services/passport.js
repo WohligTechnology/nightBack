@@ -10,6 +10,7 @@ module.exports.use(new FacebookStrategy({
         clientID: "141304936259731",
         clientSecret: "322f66550b62b9492e7271615de6ae40",
         callbackURL: "/user/loginFacebook/",
+        profileFields: ['id', 'displayName', 'photos', 'email'],
         enableProof: false
     },
     function(accessToken, refreshToken, profile, done) {
@@ -28,7 +29,9 @@ module.exports.use(new FacebookStrategy({
                         }],
                         "status": 1
                     };
-
+                    if (profile.photos && profile.photos.length > 0) {
+                        usertemp.profilePic = profile.photos[0].value;
+                    }
                     if (_.isEmpty(data)) {
                         var user = User(usertemp);
                         user.save(function(err, data2) {
@@ -54,9 +57,7 @@ module.exports.use(new TwitterStrategy({
         callbackURL: "/user/loginTwitter/",
     },
     function(token, tokenSecret, profile, done) {
-
         if (!_.isEmpty(profile)) {
-
             User.findOne({
                 "oauthLogin.socialId": profile.id + ""
             }).exec(function(err, data) {
@@ -71,7 +72,9 @@ module.exports.use(new TwitterStrategy({
                         }],
                         "status": 1
                     };
-
+                    if (profile.photos && profile.photos.length > 0) {
+                        usertemp.profilePic = profile.photos[0].value;
+                    }
                     if (_.isEmpty(data)) {
                         var user = User(usertemp);
                         user.save(function(err, data2) {
@@ -112,7 +115,9 @@ module.exports.use(new GoogleStrategy({
                         }],
                         "status": 1
                     };
-
+                    if (profile.photos && profile.photos.length > 0) {
+                        usertemp.profilePic = profile.photos[0].value;
+                    }
                     if (_.isEmpty(data)) {
                         var user = User(usertemp);
                         user.save(function(err, data2) {
@@ -134,7 +139,8 @@ module.exports.use(new GoogleStrategy({
 module.exports.use(new InstagramStrategy({
         clientID: "7473c37996d342f8b6544609559843ac",
         clientSecret: "81b2b694a7c1441886000ac94eb910a6",
-        callbackURL: "/user/loginInsta/"
+        callbackURL: "/user/loginInsta/",
+        profileFields: ['id', 'displayName', 'photos', 'email']
     },
     function(token, tokenSecret, profile, done) {
         if (!_.isEmpty(profile)) {
@@ -152,7 +158,9 @@ module.exports.use(new InstagramStrategy({
                         }],
                         "status": 1
                     };
-
+                    if (profile._json.data.profile_picture != "") {
+                        usertemp.profilePic = profile._json.data.profile_picture;
+                    }
                     if (_.isEmpty(data)) {
                         var user = User(usertemp);
                         user.save(function(err, data2) {

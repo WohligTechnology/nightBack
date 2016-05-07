@@ -30,7 +30,14 @@ module.exports = {
                 });
             }
         };
-        User.register(req.body, callback);
+        if (req.body) {
+            User.register(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid Call"
+            });
+        }
     },
     login: function(req, res) {
         var callback = function(err, data) {
@@ -43,13 +50,14 @@ module.exports = {
                 if (data._id) {
                     req.session.user = data;
                     req.session.save();
+                    console.log(req.session.user);
                     res.json({
                         data: "Login Successful",
                         value: true
                     });
                 } else {
                     req.session.user = {};
-                    req.session.save();
+
                     res.json({
                         data: {},
                         value: false
@@ -75,6 +83,7 @@ module.exports = {
     },
     profile: function(req, res) {
         var user = req.session.user;
+        console.log("////////////////", req.session.user);
         if (user) {
             res.json(user);
         } else {
@@ -88,9 +97,11 @@ module.exports = {
                     value: false
                 });
             } else {
-                res.json({
-                    value: true
-                });
+                setTimeout(function() {
+                    res.json({
+                        value: true
+                    });
+                }, 3000);
             }
         });
     },
@@ -198,6 +209,29 @@ module.exports = {
             failureRedirect: '/login'
         }, callback)(req, res);
     },
+    getAll: function(req, res) {
+        var callback = function(err, data) {
+            if (err) {
+                res.json({
+                    error: err,
+                    value: false
+                });
+            } else {
+                res.json({
+                    data: data,
+                    value: true
+                });
+            }
+        };
+        if (req.body) {
+            User.getAll(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid Call"
+            });
+        }
+    },
     //////////////////////////////MOBILE
     saveMob: function(req, res) {
         var callback = function(err, data) {
@@ -208,7 +242,7 @@ module.exports = {
                 });
             } else {
                 req.session.user = data;
-                req.session.save();
+
                 res.json({
                     data: data,
                     value: true

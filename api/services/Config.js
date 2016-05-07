@@ -25,7 +25,8 @@ var schema = new Schema({
     gaid: String,
     socialfeeds: Schema.Types.Mixed,
     notification: Schema.Types.Mixed,
-    soundCloudUsername: String
+    soundCloudUsername: String,
+    googleCloud: Schema.Types.Mixed
 });
 module.exports = mongoose.model('Config', schema);
 
@@ -391,7 +392,7 @@ var models = {
             } else {
                 var i = 0;
                 var abc = [];
-                if (data2[0].search.length > 0) {
+                if (data2[0] && data2[0].search && data2[0].search.length > 0) {
                     _.each(data2[0].search, function(respo) {
                         if (respo.enabled == true) {
                             abc.push(respo.name);
@@ -528,6 +529,7 @@ var models = {
         });
     },
     createApp: function(data, callback) {
+        data.search = data.search.toLowerCase();
         Port.getByName({
             search: data.search
         }, function(respo) {
@@ -541,7 +543,6 @@ var models = {
                             console.log("stdout: Copied");
                             Port.lastPort(data, function(portRespo) {
                                 if (!portRespo.value) {
-                                    callback(null, portRespo);
                                     var portnum = portRespo.port + 1;
                                     async.parallel([
                                         function(callback) {
@@ -594,7 +595,7 @@ var models = {
                                             });
                                             npmInstall.stdout.on("end", function() {
                                                 console.log("stdout: in end");
-                                                var nodemonStart = process.spawn("nodemon", ["app.js", "--port", portnum.toString(), "--host", "" + data.search + ".com"], { cwd: "../" + data.search });
+                                                var nodemonStart = process.spawn("node", ["app.js", "--port", portnum.toString()], { cwd: "../" + data.search });
                                                 nodemonStart.stdout.on("data", function(data) {
                                                     console.log("stdout: " + data);
                                                 });
@@ -606,7 +607,7 @@ var models = {
                                             console.log(err);
                                             callback(err, null);
                                         } else {
-                                            Port.save({
+                                            Port.saveData({
                                                 user: data._id,
                                                 port: portnum,
                                                 appname: data.search,
@@ -616,7 +617,55 @@ var models = {
                                                     console.log(err);
                                                     callback(err, null);
                                                 } else {
-                                                    callback(null, { value: "App lifted successfully" });
+                                                    async.parallel([
+                                                        function(callback) {
+                                                            var readHost = "/etc/hosts";
+                                                            fs.readFile(readHost, 'utf8', function(err, readRoot) {
+                                                                if (err) {
+                                                                    console.log(err);
+                                                                    callback(err, null);
+                                                                } else {
+                                                                    readRoot = readRoot.split("##").join("192.168.1.131 " + data.search + ".com\n##");
+                                                                    var writeHost = fs.createWriteStream(readHost);
+                                                                    writeHost.write(readRoot);
+                                                                    callback(null, { value: "App lifted successfully" });
+                                                                }
+                                                            });
+                                                        },
+                                                        function(callback) {
+                                                            var readConf = "../" + data.search + "/conf.conf";
+                                                            var writeConf = "/etc/nginx/sites-available/" + data.search + ".com.conf";
+                                                            fs.readFile(readConf, 'utf8', function(err, readcon) {
+                                                                if (err) {
+                                                                    console.log(err);
+                                                                    callback(err, null);
+                                                                } else {
+                                                                    readcon = readcon.split("sails2.com").join(data.search + ".com");
+                                                                    readcon = readcon.split("8082").join(portnum.toString());
+                                                                    var writecon = fs.createWriteStream(writeConf);
+                                                                    writecon.write(readcon);
+                                                                    var nginxConf = process.spawn("ln", ["-s", writeConf, "/etc/nginx/sites-enabled/" + data.search + ".com.conf"]);
+                                                                    nginxConf.stdout.on("end", function() {
+                                                                        var restart = process.spawn("service", ["nginx", "restart"]);
+                                                                        console.log("restart");
+                                                                        restart.stdout.on("data", function(data) {
+                                                                            console.log(data);
+                                                                        });
+                                                                        restart.stdout.on("end", function() {
+                                                                            callback(null, { value: "App lifted successfully" });
+                                                                        });
+                                                                    });
+                                                                }
+                                                            });
+                                                        }
+                                                    ], function(err, data10) {
+                                                        if (err) {
+                                                            console.log(err);
+                                                            callback(err, null);
+                                                        } else {
+                                                            callback(null, { value: "App lifted successfully" });
+                                                        }
+                                                    });
                                                 }
                                             });
                                         }
@@ -631,6 +680,21 @@ var models = {
             } else if (respo.data == "App name already exists") {
                 callback({ data: "App name already exists" }, null);
             } else {
+                callback(err, null);
+            }
+        });
+    },
+    callDelete: function(data, callback) {
+        process.exec("mongo " + data.dbname + " --eval 'db.dropDatabase()'", function(err, stdout, stderr) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else if (stdout) {
+                callback(null, {
+                    comment: "Database dropped"
+                });
+            } else {
+                console.log(err);
                 callback(err, null);
             }
         });

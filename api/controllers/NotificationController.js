@@ -99,12 +99,21 @@ module.exports = {
         }
         if (req.body) {
             if (req.body.pagenumber && req.body.pagesize) {
-                Notification.getAllMob(req.body, callback);
+                if (req.session.passport) {
+                    req.body.user = req.session.passport.user._id;
+                    callGet();
+                } else {
+                    callGet();
+                }
             } else {
                 res.json({
                     value: false,
                     data: "Please provide params"
                 });
+            }
+
+            function callGet() {
+                Notification.getAllMob(req.body, callback);
             }
         } else {
             res.json({

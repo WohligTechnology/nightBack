@@ -8,8 +8,9 @@
 var mongoose = require('mongoose');
 var Grid = require('gridfs-stream');
 var fs = require("fs");
-var lwip = require("lwip");
-var exec = require('child_process').exec;
+// var lwip = require("lwip");
+var process = require('child_process');
+var lodash = require('lodash');
 var MaxImageSize = 1200;
 
 var gfs = Grid(mongoose.connections[0].db, mongoose);
@@ -22,7 +23,9 @@ var schema = new Schema({
     blog: Schema.Types.Mixed,
     search: Schema.Types.Mixed,
     gaid: String,
-    socialfeeds: Schema.Types.Mixed
+    socialfeeds: Schema.Types.Mixed,
+    notification: Schema.Types.Mixed,
+    soundCloudUsername: String
 });
 module.exports = mongoose.model('Config', schema);
 
@@ -299,7 +302,7 @@ var models = {
         var newreturns = {};
         async.parallel([
             function(callback) {
-                HomeSlider.getAll(data, function(err, data1) {
+                Article.getAll(data, function(err, data1) {
                     if (err) {
                         newreturns.home = [];
                         callback(null, newreturns);
@@ -525,10 +528,110 @@ var models = {
         });
     },
     createApp: function(data, callback) {
-        exec("cd .. && ls", function(err, stdout, stderr) {
-            console.log(err);
-            console.log(stderr);
-            console.log(stdout);
+        Port.getByName({
+            search: data.search
+        }, function(respo) {
+            if (respo.value == true) {
+                process.exec("if test -d ../" + data.search + "; then echo 'exist'; else echo 'does not exist'; fi", function(err, stdout, stderr) {
+                    if (stdout == "exist\n") {
+                        callback({ value: "App name exists. Choose different app name" }, null);
+                    } else {
+                        var copy = process.spawn("cp", ["-ar", "newApp/", "../" + data.search]);
+                        copy.stdout.on("end", function() {
+                            console.log("stdout: Copied");
+                            Port.lastPort(data, function(portRespo) {
+                                if (!portRespo.value) {
+                                    var portnum = portRespo.port + 1;
+                                    async.parallel([
+                                        function(callback) {
+                                            var readpath = "../" + data.search + "/prodDefault.txt";
+                                            fs.readFile(readpath, 'utf8', function(err, read) {
+                                                if (err) {
+                                                    console.log(err);
+                                                    callback(err, null);
+                                                } else {
+                                                    read = read.replace("//host", "host:'" + data.search + ".com',");
+                                                    read = read.replace("//port: 1337", "port:" + portnum.toString());
+                                                    var writepath = fs.createWriteStream(readpath);
+                                                    writepath.write(read);
+                                                    callback(null, { value: "App lifted successfully" });
+                                                }
+                                            });
+                                        },
+                                        function(callback) {
+                                            var readApp = "../" + data.search + "/app.js";
+                                            fs.readFile(readApp, 'utf8', function(err, readme) {
+                                                if (err) {
+                                                    console.log(err);
+                                                    callback(err, null);
+                                                } else {
+                                                    readme = readme.split("blazen").join(data.search.toLowerCase());
+                                                    var writeApp = fs.createWriteStream(readApp);
+                                                    writeApp.write(readme);
+                                                    callback(null, { value: "App lifted successfully" });
+                                                }
+                                            });
+                                        },
+                                        function(callback) {
+                                            var readLayout = "../" + data.search + "/views/layout.ejs";
+                                            fs.readFile(readLayout, 'utf8', function(err, readlay) {
+                                                if (err) {
+                                                    console.log(err);
+                                                    callback(err, null);
+                                                } else {
+                                                    readlay = readlay.split("MyProj").join(lodash.capitalize(data.search));
+                                                    var writeLay = fs.createWriteStream(readLayout);
+                                                    writeLay.write(readlay);
+                                                    callback(null, { value: "App lifted successfully" });
+                                                }
+                                            });
+                                        },
+                                        function(callback) {
+                                            var npmInstall = process.spawn("npm", ["install"], { cwd: "../" + data.search });
+                                            npmInstall.stdout.on("data", function(data) {
+                                                console.log("stdout: " + data);
+                                            });
+                                            npmInstall.stdout.on("end", function() {
+                                                console.log("stdout: in end");
+                                                var nodemonStart = process.spawn("nodemon", ["app.js", "--port", portnum.toString(), "--host", "" + data.search + ".com"], { cwd: "../" + data.search });
+                                                nodemonStart.stdout.on("data", function(data) {
+                                                    console.log("stdout: " + data);
+                                                });
+                                                callback(null, { value: "App lifted successfully" });
+                                            });
+                                        }
+                                    ], function(err, sendback) {
+                                        if (err) {
+                                            console.log(err);
+                                            callback(err, null);
+                                        } else {
+                                            Port.saveData({
+                                                user: data._id,
+                                                port: portnum,
+                                                appname: data.search,
+                                                username: data.name
+                                            }, function(err, created) {
+                                                if (err) {
+                                                    console.log(err);
+                                                    callback(err, null);
+                                                } else {
+                                                    callback(null, { value: "App lifted successfully" });
+                                                }
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    callback({ value: "Error" }, null);
+                                }
+                            });
+                        });
+                    }
+                });
+            } else if (respo.data == "App name already exists") {
+                callback({ data: "App name already exists" }, null);
+            } else {
+                callback(err, null);
+            }
         });
     },
     ////////////////////////////////MOBILE

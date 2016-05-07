@@ -8,7 +8,8 @@ var schema = new Schema({
     lat: Number,
     long: Number,
     modificationTime: Date,
-    status: Number
+    status: Number,
+    contactno: String
 });
 
 module.exports = mongoose.model('Contact', schema);

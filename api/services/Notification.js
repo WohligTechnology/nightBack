@@ -8,8 +8,9 @@ var schema = new Schema({
     json: Schema.Types.Mixed,
     modificationTime: Date,
     sendingTime: Date,
-    status: Boolean,
-    image: String
+    status: Boolean, ///true or false
+    image: String,
+    typeForApp: String
 });
 
 module.exports = mongoose.model('Notification', schema);
@@ -26,7 +27,6 @@ var models = {
                     callback(err, false);
                 } else {
                     callback(null, data);
-                    console.log(data);
                 }
             });
         }
@@ -53,34 +53,85 @@ var models = {
     },
     /////////////////////////////////MOBILE
     getAllMob: function(data, callback) {
-        var newreturns = {};
-        newreturns.data = [];
-        data.pagenumber = parseInt(data.pagenumber);
-        data.pagesize = parseInt(data.pagesize);
-        this.find({}, {
-            images: 0
-        }).sort({
-            index: 1
-        }).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
-            if (err) {
-                console.log(err);
-                callback(err, null);
-            } else if (data2 && data2.length > 0) {
-                newreturns.data = data2;
-                newreturns.totalpages = Math.ceil(data2.length / data.pagesize);
-                newreturns.pageno = data.pagenumber;
-                callback(null, newreturns);
-            } else {
-                callback(null, newreturns);
-            }
-        });
+        var matchobj = {};
+        var matcharr = [];
+        if (data.user && data.user != "") {
+            User.getOne({
+                _id: data.user
+            }, function(err, userRespo) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else {
+                    if (userRespo.notificationSetting && Object.keys(userRespo.notificationSetting).length > 0) {
+                        if (userRespo.notificationSetting.event == true) {
+                            matcharr.push("Event");
+                        }
+                        if (userRespo.notificationSetting.photo == true) {
+                            matcharr.push("Photo");
+                        }
+                        if (userRespo.notificationSetting.video == true) {
+                            matcharr.push("Video");
+                        }
+                        if (userRespo.notificationSetting.blog == true) {
+                            matcharr.push("Blog");
+                        }
+                        matchobj = {
+                            status: true,
+                            $or: [{
+                                typeForApp: {
+                                    $exists: false
+                                }
+                            }, {
+                                typeForApp: {
+                                    $in: matcharr
+                                }
+                            }]
+                        };
+                        callMe();
+                    } else {
+                        callMe();
+                    }
+                }
+            });
+        } else {
+            matchobj = {
+                status: true
+            };
+            callMe();
+        }
+
+        function callMe() {
+            var newreturns = {};
+            newreturns.data = [];
+            data.pagenumber = parseInt(data.pagenumber);
+            data.pagesize = parseInt(data.pagesize);
+            Notification.find(matchobj, {
+                images: 0
+            }).sort({
+                index: 1
+            }).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else if (data2 && data2.length > 0) {
+                    newreturns.data = data2;
+                    newreturns.totalpages = Math.ceil(data2.length / data.pagesize);
+                    newreturns.pageno = data.pagenumber;
+                    callback(null, newreturns);
+                } else {
+                    callback(null, newreturns);
+                }
+            });
+        }
     },
     searchData: function(data, callback) {
         var check = new RegExp(data.search, "i");
         this.find({
             content: {
                 '$regex': check
-            }
+            },
+            status: true
         }, {
             _id: 1,
             content: 1

@@ -1,3 +1,4 @@
+var request = require("request");
 module.exports = {
     save: function(req, res) {
         function callback(err, data) {
@@ -131,6 +132,26 @@ module.exports = {
             });
         }
     },
+    callDelete: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            if (req.body.dbname && req.body.dbname != "") {
+                Config.callDelete(req.body, callback);
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid params"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
     ////////////////////////////MOBILE
     getAllMob: function(req, res) {
         function callback(err, data) {
@@ -142,6 +163,32 @@ module.exports = {
             res.json({
                 value: false,
                 data: "Invalid call"
+            });
+        }
+    },
+    urlToJson: function(req, res) {
+        if (req.query && req.query.url && req.query.url != "") {
+            request.get({
+                url: req.query.url
+            }, function(err, http, body) {
+                if (err) {
+                    console.log(err);
+                    res.json({
+                        value: false,
+                        data: err
+                    });
+                } else {
+                    body = JSON.parse(body);
+                    res.json({
+                        value: true,
+                        data: body
+                    });
+                }
+            });
+        } else {
+            res.json({
+                value: false,
+                data: "Please provide url"
             });
         }
     }

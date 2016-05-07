@@ -9,7 +9,7 @@ var schema = new Schema({
     type: String,
     index: Number,
     modificationTime: Date,
-    status: Boolean
+    status: Boolean //true or false
 });
 
 module.exports = mongoose.model('HomeSlider', schema);
@@ -124,7 +124,8 @@ var models = {
         this.find({
             name: {
                 '$regex': check
-            }
+            },
+            status: true
         }, {
             _id: 1,
             name: 1
