@@ -56,6 +56,7 @@ module.exports.http = {
 
         myRequestLogger: function(req, res, next) {
 
+<<<<<<< Updated upstream
             res.callback = function(err, data) {
                 if (err) {
                     res.json({
@@ -70,6 +71,24 @@ module.exports.http = {
                 }
             };
             res.validate = function(format) {
+=======
+  myRequestLogger: function(req, res, next) {
+
+    res.callback = function(err, data) {
+        if (err) {
+            res.json({
+                error: err,
+                value: false
+            });
+        } else {
+            res.json({
+                data: data,
+                value: true
+            });
+        }
+    };
+    res.validate = function(format) {
+>>>>>>> Stashed changes
 
             };
             next();
