@@ -110,8 +110,8 @@ var models = {
         data.pagenumber = parseInt(data.pagenumber);
         var newreturns = {};
         newreturns.data = [];
-        var skip = data.pagesize * (data.pagenumber - 1);
-        VideoGallery.aggregate([{
+        var skip = parseInt(data.pagesize * (data.pagenumber - 1));
+        PhotoGallery.aggregate([{
             $match: {
                 _id: objid(data._id),
                 status: true
