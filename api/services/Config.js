@@ -247,12 +247,37 @@ var models = {
                                 newHeight = height;
                             }
                             image.resize(parseInt(newWidth), parseInt(newHeight), function(err, image2) {
-                                image2.writeFile('./.tmp/uploads/' + filename, function(err) {
-                                    writer2('./.tmp/uploads/' + filename, newNameExtire, {
-                                        width: newWidth,
-                                        height: newHeight
+
+                                if (style == "cover") {
+
+                                    image2.crop(parseInt(width), parseInt(height), function(err, image3) {
+                                        if (err) {
+
+                                        } else {
+
+                                            image3.writeFile('./.tmp/uploads/' + filename, function(err) {
+                                                writer2('./.tmp/uploads/' + filename, newNameExtire, {
+                                                    width: newWidth,
+                                                    height: newHeight
+                                                });
+                                            });
+                                        }
                                     });
-                                });
+
+
+
+                                } else {
+                                    image2.writeFile('./.tmp/uploads/' + filename, function(err) {
+                                        writer2('./.tmp/uploads/' + filename, newNameExtire, {
+                                            width: newWidth,
+                                            height: newHeight
+                                        });
+                                    });
+                                }
+
+
+
+
                             });
                         });
                     });
@@ -409,17 +434,6 @@ var models = {
                                             callback2(null, newObj);
                                         } else {
                                             newObj.article = search1;
-                                            callback2(null, newObj);
-                                        }
-                                    });
-                                } else if (n == "Home") {
-                                    HomeSlider.searchData(data, function(err, search3) {
-                                        if (err) {
-                                            console.log(err);
-                                            newObj.home = [];
-                                            callback2(null, newObj);
-                                        } else {
-                                            newObj.home = search3;
                                             callback2(null, newObj);
                                         }
                                     });

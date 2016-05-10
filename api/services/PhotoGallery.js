@@ -142,6 +142,7 @@ var models = {
                 callback(null, newreturns);
             } else {
                 newreturns.data = data2[0].images;
+                0
                 newreturns.pageno = data.pagenumber;
                 callback(null, newreturns);
             }

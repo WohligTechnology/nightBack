@@ -16,35 +16,18 @@ module.exports = mongoose.model('HomeSlider', schema);
 var models = {
     saveData: function(data, callback) {
         var project = this(data);
-
-        function callSave() {
-            if (data._id) {
-                HomeSlider.findOneAndUpdate({
-                    _id: data._id
-                }, data, callback);
-            } else {
-                project.save(function(err, data) {
-                    if (err) {
-                        callback(err, false);
-                    } else {
-                        callback(null, data);
-                    }
-                });
-            }
-        }
-        if (data.status && data.status == true) {
-            this.update({}, {
-                status: false
-            }, { multi: true }, function(err, updated) {
+        if (data._id) {
+            HomeSlider.findOneAndUpdate({
+                _id: data._id
+            }, data, callback);
+        } else {
+            project.save(function(err, data) {
                 if (err) {
-                    console.log(err);
-                    callback(err, null);
+                    callback(err, false);
                 } else {
-                    callSave();
+                    callback(null, data);
                 }
             });
-        } else {
-            callSave();
         }
     },
     deleteData: function(data, callback) {

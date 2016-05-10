@@ -15,6 +15,8 @@ var schema = new Schema({
     phone: String,
     location: String,
     forgotpassword: String,
+    loginType: String,
+    address: String,
     notification: {
         type: [{
             device: String,
