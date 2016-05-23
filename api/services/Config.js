@@ -682,42 +682,42 @@ var models = {
                 if (_.isEmpty(body.data)) {
                     callback(null, { comment: "No Empty App Created" });
                 } else {
-                    // var npmInstall = process.spawn("npm", ["install"], { cwd: "../" + body.data.appname });
-                    // npmInstall.stdout.on("data", function(data2) {
-                    //     console.log("stdout: " + data2);
-                    // });
-                    // npmInstall.stdout.on("end", function() {
-                    //     console.log("stdout: in end");
-                    setTimeout(function() {
-                        var mypath = "cd ../" + body.data.appname + "/ && bash startme.sh";
-                        process.exec(mypath, function(err, stdout, stderr) {
-                            if (stdout) {
-                                setTimeout(function() {
-                                    request.post({
-                                        url: porturl + "save",
-                                        json: {
-                                            _id: body.data._id,
-                                            user: data.sendme,
-                                            name: data.name,
-                                            image: data.image,
-                                            title: data.title,
-                                            url: "http://app.blazen.io:" + body.data.appname
-                                        }
-                                    }, function(err, http, body) {
-                                        if (err) {
-                                            console.log(err);
-                                            callback(err, null);
-                                        } else {
-                                            callback(null, { value: "App lifted successfully" });
-                                        }
-                                    });
-                                }, 5000);
-                            } else {
-                                callback(null, { value: "Some Error", err: err });
-                            }
-                        });
-                    }, 2000);
-                    // });
+                    var npmInstall = process.spawn("npm", ["install"], { cwd: "../" + body.data.appname });
+                    npmInstall.stdout.on("data", function(data2) {
+                        console.log("stdout: " + data2);
+                    });
+                    npmInstall.stdout.on("end", function() {
+                        console.log("stdout: in end");
+                        setTimeout(function() {
+                            var mypath = "cd ../" + body.data.appname + "/ && bash startme.sh";
+                            process.exec(mypath, function(err, stdout, stderr) {
+                                if (stdout) {
+                                    setTimeout(function() {
+                                        request.post({
+                                            url: porturl + "save",
+                                            json: {
+                                                _id: body.data._id,
+                                                user: data.sendme,
+                                                name: data.name,
+                                                image: data.image,
+                                                title: data.title,
+                                                url: "http://app.blazen.io:" + body.data.appname
+                                            }
+                                        }, function(err, http, body) {
+                                            if (err) {
+                                                console.log(err);
+                                                callback(err, null);
+                                            } else {
+                                                callback(null, { value: "App lifted successfully" });
+                                            }
+                                        });
+                                    }, 5000);
+                                } else {
+                                    callback(null, { value: "Some Error", err: err });
+                                }
+                            });
+                        }, 2000);
+                    });
                 }
             }
         });
