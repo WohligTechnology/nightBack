@@ -1,0 +1,24 @@
+<ion-view view-title="Notifications">
+    <div class="text-center positive middle-align" ng-if="msg != ''">
+        {{msg}}
+    </div>
+    <ion-content>
+      <ion-refresher
+        pulling-text=""
+        on-refresh="refreshData()">
+      </ion-refresher>
+        <ion-list class="full-width">
+            <ion-item ng-repeat="item in notify" class="item-text-wrap" ui-sref='{{item | toPages}}'>
+                <img ng-if="item.image" cache-src="{{item.image | serverimage}}" class="full-image" ng-if="item.image">
+                <p ng-bind-html="item.content"></p>
+                <p ng-if="item.linktype == 17">{{item.link}}</p>
+                <p ng-if="item.modificationTime">{{item.modificationTime | formatdate}}</p>
+                <ion-option-button class="button-positive" ng-click="share(item)">
+                    Share
+                </ion-option-button>
+            </ion-item>
+            <ion-infinite-scroll on-infinite="loadMoreNotification()" ng-if="keepscrolling" distance="25%">
+            </ion-infinite-scroll>
+        </ion-list>
+    </ion-content>
+</ion-view>

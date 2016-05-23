@@ -1,0 +1,45 @@
+<ion-view view-title="My Account">
+    <ion-content>
+        <div class="side-image">
+            <figure>
+                <a href="#/app/profile" menu-close>
+                    <img ng-src="{{userdetails.userimage | serverimage}}" ng-if="userdetails.userimage">
+                    <img src="/img/user.jpg" ng-if="!userdetails.userimage">
+                </a>
+                <figcaption>Ana Todurie</figcaption>
+            </figure>
+            <div class="profile-set">
+                <a href="#/app/setting" menu-close> <i class="icon ln-gear2 "></i>
+                </a>
+            </div>
+        </div>
+        <div class="user-from">
+            <h4>My account</h4>
+            <div class="list">
+                <label class="item item-input item-floating-label">
+                    <span class="input-label">Full name</span>
+                    <i class="icon ln-user"><input type="text" placeholder="Full name" ng-model="profile.name"></i>
+                </label>
+                <label class="item item-input item-floating-label">
+                    <span class="input-label">Email</span>
+                    <i class="icon ln-envelope"><input type="email" placeholder="Email" ng-model="profile.email"></i>
+                </label>
+                <label class="item item-input item-floating-label">
+                    <span class="input-label">Password</span>
+                    <i class="icon ln-lock"><input type="password" placeholder="Password" ng-model="profile.password"></i>
+                </label>
+                <label class="item item-input item-floating-label">
+                    <span class="input-label">Date of birth</span>
+                    <i class="icon ln-gift"><input type="text" onfocus="(this.type='date')" placeholder="Birth Date" ng-model="profile.dob"></i>
+                </label>
+                <label class="item item-input item-floating-label">
+                    <span class="input-label">Phone</span>
+                    <i class="icon ln-lock"><input type="number" placeholder="Phone number" ng-model="profile.contact"></i>
+                </label>
+            </div>
+            <button class="button button-block button-positive" ng-click="profilesubmit(profile);">
+                Submit
+            </button>
+        </div>
+    </ion-content>
+</ion-view>

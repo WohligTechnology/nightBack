@@ -1,0 +1,6 @@
+body {
+  direction: rtl;
+}
+ion-header-bar, .imageView.modal, .button, .click-block-hide {
+  direction: ltr;
+}

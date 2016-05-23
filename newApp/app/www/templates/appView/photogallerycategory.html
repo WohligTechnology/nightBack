@@ -1,0 +1,22 @@
+<ion-view view-title="Photo Category">
+
+    <div class="text-center positive middle-align" ng-if="msg != ''">
+        {{msg}}
+    </div>
+    <ion-content class="padding">
+      <ion-refresher
+        pulling-text=""
+        on-refresh="refreshData()">
+      </ion-refresher>
+        <div class="list" ng-repeat="photos in photos" ng-click="sendphotoid(photos._id);">
+            <div class="item item-image">
+                <img cache-src="{{photos.icon | serverpath:800:400:'cover'}}">
+            </div>
+            <div class="item">
+                {{photos.title}}
+            </div>
+        </div>
+        <ion-infinite-scroll on-infinite="loadMorePolls()" ng-if="keepscrolling" distance="25%">
+        </ion-infinite-scroll>
+    </ion-content>
+</ion-view>

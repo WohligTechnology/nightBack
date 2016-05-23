@@ -1,0 +1,29 @@
+<ion-view view-title="Enquiry">
+    <ion-content>
+        <div class="contactform">
+            <div class="list padding smart-form">
+                <label class="item item-input item-floating-label" ng-class="allvalidation[0].validation">
+                    <span class="input-label">Full Name</span>
+                    <input type="text" placeholder="Full name" ng-model="enquiry.name">
+                </label>
+                <label class="item item-input item-floating-label" ng-class="allvalidation[1].validation">
+                    <span class="input-label">Email</span>
+                    <input type="email" placeholder="Email" ng-model="enquiry.email">
+                </label>
+                <label class="item item-input item-floating-label" ng-class="allvalidation[2].validation">
+                    <span class="input-label">Subject</span>
+                    <input type="text" placeholder="Subject" ng-model="enquiry.title">
+                </label>
+                <label class="item item-input item-floating-label" ng-class="allvalidation[3].validation">
+                    <span class="input-label">Comments</span>
+                    <textarea placeholder="Comments" ng-model="enquiry.content" rows="4" cols="50"></textarea>
+                </label>
+            </div>
+            <div class="padding-horizontal">
+                <button no-int class="button button-block button-positive" ng-click="enquiryform(enquiry);">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

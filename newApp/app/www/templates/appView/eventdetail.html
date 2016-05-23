@@ -1,0 +1,46 @@
+<ion-view view-title="Events">
+    <div class="text-center positive middle-align" ng-if="msg != ''">
+        {{msg}}
+    </div>
+    <ion-content class="padding-bottom">
+      <ion-refresher
+        pulling-text=""
+        on-refresh="refreshData()">
+      </ion-refresher>
+        <div class="article-view">
+            <div class="min-height max-height" ng-if="eventdetail.image">
+                <img class="full-image" cache-src="{{eventdetail.image | serverimage}}">
+            </div>
+            <div class="padding-horizontal">
+                <h4 class="dark">{{eventdetail.title}}</h4>
+                <p ng-if="eventdetail.timestamp||eventdetail.starttime">
+                    <span class="icon-space"><i class="icon ln-calendar3 positive"></i></span><span ng-if="eventdetail.timestamp">{{eventdetail.timestamp|date : 'dd MMM, yyyy'}}</span><span ng-if="eventdetail.starttime"> @ {{eventdetail.startTime|convertto12}}</span>
+                </p>
+                <p ng-if="eventdetail.venue">
+                    <span class="icon-space"><i class="icon ln-map-marker positive"></i></span><span ng-bind-html="eventdetail.venue"></span>
+                </p>
+                <p ng-bind-html="eventdetail.content"></p>
+                <h5 class="dark" ng-if="eventdetail.eventvideos && eventdetail.eventvideos != ''">Videos</h5>
+                <ion-slide-box on-slide-changed="slideHasChanged($index)">
+                    <ion-slide ng-repeat="images in eventdetail.eventvideos">
+                        <div class="row">
+                            <div class="col col-50" ng-repeat="img in images" ng-click="showVideo(img.link);">
+                                <img cache-src="{{img.thumbnail}}" alt="" class="full-image">
+                            </div>
+                        </div>
+                    </ion-slide>
+                </ion-slide-box>
+                <h5 class="dark" ng-if="eventdetail.eventimages && eventdetail.eventimages != ''">Images</h5>
+                <ion-slide-box on-slide-changed="slideHasChanged($index)">
+                    <ion-slide ng-repeat="images in eventdetail.eventimages">
+                        <div class="row">
+                            <div class="col col-50" ng-repeat="img in images" ng-click="showImage(img.image);">
+                              <img cache-src="{{img.image|serverpath}}" class="full-image">
+                            </div>
+                        </div>
+                    </ion-slide>
+                </ion-slide-box>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

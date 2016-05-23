@@ -52,6 +52,32 @@ module.exports = {
             });
         }
     },
+    getById: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            Port.getById(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    lastPort: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            Port.lastPort(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
     getAll: function(req, res) {
         function callback(err, data) {
             Config.GlobalCallback(err, data, res);

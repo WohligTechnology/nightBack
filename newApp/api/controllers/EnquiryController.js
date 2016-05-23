@@ -65,6 +65,19 @@ module.exports = {
             });
         }
     },
+    getLatest: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            Enquiry.getLatest(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
     //////////////////////////////MOBILE
     saveMob: function(req, res) {
         function callback(err, data) {

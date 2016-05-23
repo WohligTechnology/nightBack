@@ -10,7 +10,7 @@ var schema = new Schema({
     type: String,
     content: String,
     modificationTime: Date,
-    status: Number
+    status: Boolean
 });
 
 module.exports = mongoose.model('IntroSlider', schema);

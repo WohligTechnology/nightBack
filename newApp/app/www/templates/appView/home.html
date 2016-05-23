@@ -1,0 +1,16 @@
+<ion-view view-title="Home">
+    <ion-content>
+      <ion-refresher
+        pulling-text=""
+        on-refresh="refreshData()">
+      </ion-refresher>
+        <ion-slide-box on-slide-changed="slideHasChanged($index)" does-continue="true" auto-play="true">
+            <ion-slide ng-repeat="slide in slides track by $index" ui-sref='{{slide | toPages}}' ng-if="slide.status">
+              <div class="img-home-box">
+                  <img cache-src="{{slide.image | serverpath:1000:1000:'fill'}}" class="full-image">
+              </div>
+            </ion-slide>
+        </ion-slide-box>
+        <div class="padding" ng-bind-html="config.config.homeContent"></div>
+    </ion-content>
+</ion-view>

@@ -1,0 +1,86 @@
+<ion-view view-title="Blog">
+  <div class="text-center positive middle-align" ng-if="msg != ''">
+    {{msg}}
+  </div>
+  <ion-content>
+    <ion-refresher
+      pulling-text=""
+      on-refresh="refreshData()">
+    </ion-refresher>
+    <div class="padding card" ng-repeat="blog in blogs" ng-show="showWordpress" ng-click="blogDetail(blog,'wordpress');">
+      <ion-item class="item-avatar item-icon-right">
+        <div class="image-adjust img-blog" ng-style="{'background-image':'url({{blog.author.avatar_URL}})'}"></div>
+        <h2>{{blog.author.first_name}} {{blog.author.last_name}}</h2>
+        <p>{{blog.date|date:'MMMM dd, yyyy'}}</p>
+      </ion-item>
+      <div class="item item-body" ng-click="blogDetail(blog,'wordpress');">
+      <div class="mb10" ng-if="blog.featured_image">
+          <img class="full-image" cache-src="{{blog.featured_image}}">
+      </div>
+        <p class="margin0">
+          <span ng-bind-html="blog.content| cut:true:367:'. . .'| rawHtml"></span>
+        </p>
+      </div>
+    </div>
+
+    <div class="padding card" ng-repeat="blog in blogs" ng-show="showWordpressSelf" ng-click="blogDetail(blog,'wordpressself');">
+      <ion-item class="item-avatar item-icon-right">
+        <div class="image-adjust img-blog" ng-style="{'background-image':'url(img/blog.png)'}"></div>
+        <!--                <h2>{{blog.author.first_name}} {{blog.author.last_name}}</h2>-->
+        <h2>{{blog.title.rendered}}</h2>
+        <p>{{blog.date|date:'MMMM dd, yyyy'}}</p>
+      </ion-item>
+      <div class="item item-body" ng-click="blogDetail(blog,'wordpressself');">
+        <p>
+          <span ng-bind-html="blog.content|cut:true:367:'. . .'|rawHtml"></span>
+        </p>
+      </div>
+    </div>
+
+    <div class="padding card" ng-repeat="blog in blogs" ng-show="showTumblr" ng-click="blogDetail(blog,'tumblr');">
+      <ion-item class="item-avatar item-icon-right">
+        <div class="image-adjust img-blog" ng-style="{'background-image': 'url('+blog.photos[0].alt_sizes[5].url+')'}"></div>
+        <h2 ng-if="blog.summary" ng-bind-html="blog.summary"></h2>
+        <!-- <h2 ng-if="blog.slug" ng-bind-html="blog.slug"></h2> -->
+        <!-- <h2 ng-if="blog.blog_name" ng-bind-html="blog.blog_name"></h2> -->
+        <p ng-if="blog.date">{{blog.date|formatdate}}</p>
+      </ion-item>
+      <div class="item item-body" ng-click="blogDetail(blog,'tumblr');">
+        <!-- <img class="full-image" cache-src="{{blog.photos[0].original_size.url}}"> -->
+        <p ng-if="blog.type == 'audio'">
+          <span>{{blog.album}}</span>
+          <span ng-bind-html="blog.embed|rawHtml" ng-if="blog.embed"></span>
+          <span ng-bind-html="blog.body|cut:true:367:'. . .'|rawHtml"></span>
+        </p>
+        <p ng-if="blog.type == 'quote'">
+          <span>{{blog.album}}</span>
+          <span ng-bind-html="blog.text|cut:true:367:'. . .'|rawHtml"></span>
+        </p>
+        <p ng-if="blog.type == 'link'">
+          <span>Link</span>
+          <a href="{{blog.url}}" target="_blank">{{blog.url}}</a>
+        </p>
+        <p>
+          <span ng-bind-html="blog.body|cut:true:367:'. . .'|rawHtml"></span>
+        </p>
+      </div>
+    </div>
+
+    <div class="padding card" ng-repeat="blog in blogs" ng-show="showCustomblog" ng-click="blogDetail(blog,'cms');">
+      <ion-item class="item-avatar item-icon-right">
+        <!-- <div class="image-adjust img-blog" ng-style="{'background-image':'url(http://a.13cdn.com/Facebook_TaylorSwift.png)'}"></div> -->
+        <img cache-src="{{blog.image | serverpath}}" circle-container-style="{{circleStyle}}" alt="" />
+        <h2>{{blog.blogtitle}}</h2>
+        <p ng-if="blog.timestamp">{{blog.timestamp|formatdate}}</p>
+      </ion-item>
+      <div class="item item-body" ng-click="blogDetail(blog,'cms');">
+        <!--                <img class="full-image" ng-src="{{blog.photos[0].original_size.url}}">-->
+        <p>
+          <span ng-bind-html="blog.content|cut:true:367:'. . .'|rawHtml"></span>
+        </p>
+      </div>
+    </div>
+    <ion-infinite-scroll on-infinite="loadMorePolls()" ng-if="keepscrolling" distance="25%">
+    </ion-infinite-scroll>
+  </ion-content>
+</ion-view>

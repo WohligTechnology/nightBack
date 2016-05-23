@@ -1,0 +1,42 @@
+<ion-view view-title="Setting">
+    <ion-content>
+        <ul class="list">
+            <li class="item item-toggle">
+                Events Notification
+                <label class="toggle toggle-positive">
+                    <input type="checkbox" ng-model="user.notificationSetting.event" ng-click="changeSetting(setting)">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </li>
+            <li class="item item-toggle">
+                Photos Notification
+                <label class="toggle toggle-positive">
+                    <input type="checkbox" ng-model="user.notificationSetting.photo" ng-click="changeSetting(setting)">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </li>
+            <li class="item item-toggle">
+                Videos Notification
+                <label class="toggle toggle-positive">
+                    <input type="checkbox" ng-model="user.notificationSetting.video" ng-click="changeSetting(setting)">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </li>
+            <li class="item item-toggle">
+                Blogs Notification
+                <label class="toggle toggle-positive">
+                    <input type="checkbox" ng-model="user.notificationSetting.blog" ng-click="changeSetting(setting)">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </li>
+        </ul>
+    </ion-content>
+</ion-view>

@@ -337,7 +337,31 @@ var models = {
                 callback(null, data2);
             }
         });
-    }
+    },
+    getLatest: function(data, callback) {
+        this.find().sort({ "_id": -1 }).limit(10).exec(callback);
+    },
+    getCategory: function(data, callback) {
+        User.aggregate([{
+            $match: {
+                loginType: {
+                    $exists: true
+                }
+            }
+        }, {
+            $group: {
+                _id: "$loginType",
+                count: { $sum: 1 }
+            }
+        }]).exec(function(err, result) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                callback(null, result);
+            }
+        });
+    },
 };
 
 module.exports = _.assign(module.exports, models);

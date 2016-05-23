@@ -15,6 +15,8 @@ var schema = new Schema({
     phone: String,
     location: String,
     forgotpassword: String,
+    loginType: String,
+    address: String,
     notification: {
         type: [{
             device: String,
@@ -41,6 +43,7 @@ var schema = new Schema({
         }],
         index: true
     },
+    notificationSetting: Schema.Types.Mixed,
     modificationTime: Date
 });
 
@@ -50,36 +53,39 @@ var models = {
         if (data.password && data.password != "") {
             data.password = md5(data.password);
         }
-        var user = this(data);
-        this.count({
-            "email": data.email
-        }).exec(function(err, data2) {
-            if (err) {
-                callback(err, data);
-            } else {
-                if (data2 === 0) {
-                    user.save(function(err, data3) {
-                        data3.password = '';
-                        callback(err, data3);
-                    });
-                } else {
-                    callback("Email already Exists", false);
-                }
-            }
-        });
-    },
-    saveData: function(data, callback) {
         var project = this(data);
         if (data._id) {
+            delete data.email;
+            delete data.password;
+            delete data.forgotpassword;
             this.findOneAndUpdate({
                 _id: data._id
-            }, data, callback);
-        } else {
-            project.save(function(err, data) {
+            }, data).lean().exec(function(err, data4) {
                 if (err) {
-                    callback(err, false);
+                    console.log(err);
+                    callback(err, null);
                 } else {
-                    callback(null, data);
+                    delete data4.password;
+                    delete data4.forgotpassword;
+                    callback(null, data4);
+                }
+            });
+        } else {
+            this.count({
+                "email": data.email
+            }).exec(function(err, data2) {
+                if (err) {
+                    callback(err, data);
+                } else {
+                    if (data2 === 0) {
+                        project.save(function(err, data3) {
+                            data3 = data3.toObject();
+                            delete data3.password;
+                            callback(err, data3);
+                        });
+                    } else {
+                        callback("Email already Exists", false);
+                    }
                 }
             });
         }
@@ -105,6 +111,9 @@ var models = {
     getOne: function(data, callback) {
         this.findOne({
             "_id": data._id
+        }, {
+            password: 0,
+            forgotpassword: 0
         }).exec(callback);
     },
     //////////////////////////////MOBILE
@@ -151,9 +160,14 @@ var models = {
                 if (err) {
                     callback(err, false);
                 } else {
-                    data.password = '';
-                    data.forgotpassword = '';
-                    callback(null, data);
+                    data2.password = '';
+                    data2.forgotpassword = '';
+                    if (data.profilePic && data.profilePic != "") {
+                        data2.profilePic = data.profilePic;
+                    } else if (data.bannerPic && data.bannerPic != "") {
+                        data2.bannerPic = data.bannerPic;
+                    }
+                    callback(null, data2);
                 }
             });
         } else {
@@ -253,7 +267,7 @@ var models = {
             } else {
                 if (found) {
                     console.log(found);
-                    if (!found.oauthLogin.length > 0) {
+                    if (!found.oauthLogin || (found.oauthLogin && found.oauthLogin.length <= 0)) {
                         var text = "";
                         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
                         for (var i = 0; i < 8; i++) {
@@ -323,7 +337,31 @@ var models = {
                 callback(null, data2);
             }
         });
-    }
+    },
+    getLatest: function(data, callback) {
+        this.find().sort({ "_id": -1 }).limit(10).exec(callback);
+    },
+    getCategory: function(data, callback) {
+        User.aggregate([{
+            $match: {
+                loginType: {
+                    $exists: true
+                }
+            }
+        }, {
+            $group: {
+                _id: "$loginType",
+                count: { $sum: 1 }
+            }
+        }]).exec(function(err, result) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                callback(null, result);
+            }
+        });
+    },
 };
 
 module.exports = _.assign(module.exports, models);

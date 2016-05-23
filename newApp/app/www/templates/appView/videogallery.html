@@ -1,0 +1,24 @@
+<ion-view view-title="Videos">
+    <div class="text-center positive middle-align" ng-if="msg != ''">
+        {{msg}}
+    </div>
+    <ion-content>
+      <ion-refresher
+        pulling-text=""
+        on-refresh="refreshData()">
+      </ion-refresher>
+        <ion-list>
+            <ion-item collection-repeat="item in videos" class="item-thumbnail-left item-text-wrap" ng-click="showVideo(item.link);">
+                <!-- <div class="image-adjust img-content" ng-style="{'background-image':'url(http://img.youtube.com/vi/{{item.url | url}}/default.jpg)'}"></div> -->
+                <img cache-src="{{item.thumbnail}}" circle-container-style="{{circleStyle}}" alt="" />
+                <h2>{{item.name}}</h2>
+                <p>{{item.subtitle}}</p>
+                <ion-option-button class="button-positive" ng-click="share(item)">
+                    Share
+                </ion-option-button>
+            </ion-item>
+            <ion-infinite-scroll on-infinite="loadMorePolls()" ng-if="keepscrolling" distance="25%">
+            </ion-infinite-scroll>
+        </ion-list>
+    </ion-content>
+</ion-view>

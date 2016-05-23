@@ -1,0 +1,12 @@
+<ion-modal-view class="video-overlay">
+    <ion-content class="full-height">
+        <div class="padding">
+            <button class="button button-light button-outline button-small pull-right z-ind" ng-click="closeImage();">
+                Done
+            </button>
+        </div>
+        <div class="at-center">
+            <img src="{{image.img | serverimage}}" alt="" class="full-image">
+        </div>
+    </ion-content>
+</ion-modal-view>

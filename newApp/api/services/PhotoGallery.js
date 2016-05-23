@@ -13,7 +13,7 @@ var schema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'PhotoGalleryCategory'
     },
-    status: String,
+    status: Boolean,
     date: Date
 });
 
@@ -85,7 +85,9 @@ var models = {
         newreturns.data = [];
         data.pagenumber = parseInt(data.pagenumber);
         data.pagesize = parseInt(data.pagesize);
-        this.find({}, {
+        this.find({
+            status: true
+        }, {
             images: 0
         }).sort({
             index: 1
@@ -108,10 +110,11 @@ var models = {
         data.pagenumber = parseInt(data.pagenumber);
         var newreturns = {};
         newreturns.data = [];
-        var skip = data.pagesize * (data.pagenumber - 1);
-        VideoGallery.aggregate([{
+        var skip = parseInt(data.pagesize * (data.pagenumber - 1));
+        PhotoGallery.aggregate([{
             $match: {
-                _id: objid(data._id)
+                _id: objid(data._id),
+                status: true
             }
         }, {
             $unwind: "$images"
@@ -139,6 +142,7 @@ var models = {
                 callback(null, newreturns);
             } else {
                 newreturns.data = data2[0].images;
+                0
                 newreturns.pageno = data.pagenumber;
                 callback(null, newreturns);
             }
@@ -149,7 +153,8 @@ var models = {
         this.find({
             title: {
                 '$regex': check
-            }
+            },
+            status: true
         }, {
             _id: 1,
             title: 1

@@ -1,0 +1,15 @@
+<ion-view view-title="Social Feeds">
+    <ion-content>
+      <ion-refresher
+        pulling-text=""
+        on-refresh="refreshData()">
+      </ion-refresher>
+        <div class="row" ng-repeat="socs in social">
+            <div class="col" ng-repeat="soc in socs">
+                <div class="social-link text-center {{soc.name|noappid}}" ng-click="goSocial(soc.value)">
+                    <i class="icon ion-social-{{soc.name|noappid}}"></i>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

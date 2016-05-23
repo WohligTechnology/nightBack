@@ -6,7 +6,7 @@ var schema = new Schema({
     address: String,
     subject: String,
     email: String,
-    timestamp: Date,
+    timestamp: { type: Date, default: Date.now },
     comment: String
 });
 
@@ -64,6 +64,9 @@ var models = {
                 }
             });
         }
+    },
+    getLatest: function(data, callback) {
+        this.find().sort({ "_id": -1 }).limit(10).exec(callback);
     },
 };
 

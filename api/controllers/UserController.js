@@ -427,6 +427,43 @@ module.exports = {
             });
         }
     },
+
+    getLatest: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            User.getLatest(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    getCategory: function(req, res) {
+        var callback = function(err, data) {
+            if (err) {
+                res.json({
+                    error: err,
+                    value: false
+                });
+            } else {
+                res.json({
+                    data: data,
+                    value: true
+                });
+            }
+        };
+        if (req.body) {
+            User.getCategory(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid Call"
+            });
+        }
+    },
     ///////////////////////////////
     test: function(req, res) {
         sails.log.error('Test is been Called');

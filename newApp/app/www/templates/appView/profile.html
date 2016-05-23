@@ -1,0 +1,69 @@
+<ion-view view-title="My Profile">
+    <ion-content>
+        <div class="relative profile-banner" ng-style="user.newcoverimage">
+            <button class="button button-dark button-small pull-right dark-transparent w-full" ng-click="picImageForCover()" ng-if="edit==true;">Edit Image</button>
+            <div class="image-adjust" ng-style="user.newimage">
+                <button class="button button-dark button-small dark-transparent w-full" ng-click="picFromGallery()" ng-if="edit==true;">Edit</button>
+            </div>
+            <div class="gradient-hold full">
+                <h3 class="light">{{user.name}}</h3>
+                <button class="button button-positive button-edit button-round ion-edit" ng-click="changeedit(true)" ng-show="edit==false;"></button>
+                <button class="button button-positive button-edit button-round ion-close" ng-click="changeedit(false)" ng-show="edit==true;"></button>
+            </div>
+        </div>
+        <div ng-if="edit==false;">
+            <ion-list>
+                <ion-item><span class="icon-space"><i class="icon ln-envelope"></i></span> {{user.email}}</ion-item>
+                <ion-item><span class="icon-space"><i class="icon ln-phone"></i></span> {{user.phone}}</ion-item>
+                <ion-item><span class="icon-space"><i class="icon ln-map-marker"></i></span> {{user.location}}</ion-item>
+                <ion-item><span class="icon-space"><i class="icon ln-calendar2"></i></span> {{user.dob|date:'MMMM dd, yyyy'}}</ion-item>
+            </ion-list>
+        </div>
+        <div ng-if="edit==true;">
+            <div class="list list-icon">
+                <label class="item item-input">
+                    <span class="input-label"><i class="icon ln-user"></i></span>
+                    <input type="text" placeholder="Name" ng-model="user.name">
+                </label>
+                <label class="item item-input">
+                    <span class="input-label"><i class="icon ln-envelope"></i></span>
+                    <input type="email" placeholder="Email Address" ng-model="user.email">
+                </label>
+                <label class="item item-input">
+                    <span class="input-label"><i class="icon ln-phone"></i></span>
+                    <input type="tel" placeholder="Phone No." ng-model="user.phone" maxlength="15" only-digits>
+                </label>
+                <label class="item item-input">
+                    <span class="input-label"><i class="icon ln-map-marker"></i></span>
+                    <input type="text" placeholder="Location" ng-model="user.location">
+                </label>
+                <label class="item item-input">
+                    <span class="input-label"><i class="icon ln-calendar2"></i></span>
+                    <input type="date" placeholder="Birth Date" ng-model="user.dob">
+                </label>
+            </div>
+            <div class="padding-horizontal padding-bottom">
+                <button no-int class="button button-positive button-block" ng-click="saveProfile();">Save</button>
+            </div>
+            <div class="list list-icon" ng-if="!user.oauthLogin || user.oauthLogin == ''">
+                <div class="item item-divider">Change Password</div>
+                <label class="item item-input">
+                    <span class="input-label"><i class="icon ln-user"></i></span>
+                    <input type="password" placeholder="Old password" ng-model="password.oldpassword" ng-class="allvalidation[0].validation">
+                </label>
+                <label class="item item-input">
+                    <span class="input-label"><i class="icon ln-envelope"></i></span>
+                    <input type="password" placeholder="New password" ng-model="password.newpassword" ng-class="allvalidation[1].validation">
+                </label>
+                <label class="item item-input">
+                    <span class="input-label"><i class="icon ln-phone"></i></span>
+                    <input type="password" placeholder="Confirm password" ng-model="password.confirmpassword" ng-class="allvalidation[2].validation">
+                </label>
+            </div>
+            <div class="padding-horizontal" ng-if="!user.oauthLogin || user.oauthLogin == ''">
+                <button no-int class="button button-positive button-block" ng-click="changePassword();">Change password</button>
+            </div>
+        </div>
+        </ion-item>
+    </ion-content>
+</ion-view>

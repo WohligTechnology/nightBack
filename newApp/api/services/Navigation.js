@@ -9,7 +9,7 @@ var schema = new Schema({
     order: Number,
     link: Schema.Types.Mixed,
     modificationTime: Date,
-    status: Number,
+    status: Number, //1=enable or 0
     index: Number,
     default: Boolean
 });
@@ -103,7 +103,7 @@ var models = {
     },
     /////////////////////////MOBILE
     getAllMob: function(data, callback) {
-        this.find().exec(callback);
+        this.find({ status: 1 }).exec(callback);
     }
 };
 

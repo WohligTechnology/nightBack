@@ -74,8 +74,8 @@ module.exports = {
         var body = "Notification";
         message.addNotification('title', title);
         message.addNotification('body', body);
-        var reg = ["APA91bGkCOGCvZUMvlRwVN9F5TWuip1eqBQ5gLP-5fA5gDnM0m2tH6mtocL40BH-phKl8c950NBrdXIHSSOkA_Oc_3DLgVIM1Yaj5T6Mv58gf3_6PbV5tKKz_7vIAhpWRXPe6JHUV6_Z"];
-        var sender = new gcm.Sender('AIzaSyDhPfaMrNrxf3FX4s1WdCP3Jvwccf3uVn0');
+        var reg = ["exWnILOyZtc:APA91bGtjPhPzmHiHjJU8-ctNPkZlWTM3WxrBd4fuWBiphFz7z4RPwi_G-_I5ytGOncfN-_ajPq86E87OfnoPM18UqP1QtaeyIgfhxnjCu2eusB0wkhpeT3cVJaXsOEq3CkuOagaYfwd"];
+        var sender = new gcm.Sender('AIzaSyCJ54QPYUUE7z8icWKKHFvG_hIrrisK0DM');
         sender.send(message, {
             registrationTokens: reg
         }, function(err, response) {
@@ -99,12 +99,21 @@ module.exports = {
         }
         if (req.body) {
             if (req.body.pagenumber && req.body.pagesize) {
-                Notification.getAllMob(req.body, callback);
+                if (req.session.passport) {
+                    req.body.user = req.session.passport.user._id;
+                    callGet();
+                } else {
+                    callGet();
+                }
             } else {
                 res.json({
                     value: false,
                     data: "Please provide params"
                 });
+            }
+
+            function callGet() {
+                Notification.getAllMob(req.body, callback);
             }
         } else {
             res.json({

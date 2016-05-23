@@ -9,7 +9,7 @@ var schema = new Schema({
         index: true
     },
     image: String,
-    status: String,
+    status: Boolean,
     views: Number,
     date: Date,
     modificationTime: Date
@@ -58,7 +58,9 @@ var models = {
         newreturns.data = [];
         data.pagenumber = parseInt(data.pagenumber);
         data.pagesize = parseInt(data.pagesize);
-        this.find({}, {
+        this.find({
+            status: true
+        }, {
             videos: 0
         }).sort({
             index: 1
@@ -78,7 +80,8 @@ var models = {
     },
     getOneMob: function(data, callback) {
         this.findOne({
-            "_id": data._id
+            "_id": data._id,
+            status: true
         }).exec(callback);
     },
     searchData: function(data, callback) {
@@ -92,7 +95,8 @@ var models = {
                 content: {
                     '$regex': check
                 }
-            }]
+            }],
+            status: true
         }, {
             _id: 1,
             name: 1,

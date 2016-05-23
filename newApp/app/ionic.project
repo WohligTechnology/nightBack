@@ -1,0 +1,19 @@
+{
+  "name": "BusinessApp",
+  "app_id": "b99a7549",
+  "gulpStartupTasks": [
+    "sass",
+    "watch"
+  ],
+  "watchPatterns": [
+    "www/**/*",
+    "!www/lib/**/*"
+  ],
+  "browsers": [
+    {
+      "platform": "android",
+      "browser": "crosswalk",
+      "version": "12.41.296.5"
+    }
+  ]
+}

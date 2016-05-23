@@ -1,0 +1,14 @@
+<ion-view view-title="Gallery">
+    <div class="text-center positive middle-align" ng-if="msg != ''">
+        {{msg}}
+    </div>
+    <ion-content>
+      <ion-refresher
+        pulling-text=""
+        on-refresh="refreshData()">
+      </ion-refresher>
+        <ion-gallery ion-gallery-items="photos" ng-if="photos"></ion-gallery>
+        <ion-infinite-scroll on-infinite="loadMorePolls()" ng-if="keepscrolling" distance="25%">
+        </ion-infinite-scroll>
+    </ion-content>
+</ion-view>

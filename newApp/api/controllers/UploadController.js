@@ -43,14 +43,14 @@ module.exports = {
                 Config.GlobalCallback(err, fileNames, res);
             } else {
                 var updateObj = {};
-                if (req.body.profile == true) {
+                if (req.body.image == "true") {
                     updateObj = {
-                        _id: req.session.user._id,
+                        _id: req.session.passport.user._id,
                         profilePic: fileNames
                     };
                 } else {
                     updateObj = {
-                        _id: req.session.user._id,
+                        _id: req.session.passport.user._id,
                         bannerPic: fileNames
                     };
                 }
@@ -59,7 +59,7 @@ module.exports = {
                         console.log(err);
                         callback(err, null);
                     } else {
-                        req.session.user = updated;
+                        req.session.passport = { user: updated };
                         req.session.save();
                         res.json({
                             data: "Picture Updated",
@@ -70,7 +70,7 @@ module.exports = {
             }
         }
         var fileNames = [];
-        if (req.session.user && req.body.profile && req.body.profile != "") {
+        if (req.session.passport && req.body.image && req.body.image != "") {
             req.file("file").upload({
                 maxBytes: 10000000 // 10 MB Storage 1 MB = 10^6
             }, function(err, uploadedFile) {

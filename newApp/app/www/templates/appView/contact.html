@@ -1,0 +1,32 @@
+<ion-view view-title="Contact">
+  <div class="text-center positive middle-align" ng-if="msg != ''">
+      {{msg}}
+  </div>
+    <ion-content>
+        <div class="contactus">
+            <div class="address" ng-repeat="contact in contacts">
+                <div class="card">
+                    <div class="list item-text-wrap">
+                        <div class="item item-icon-left" ng-if="contact.address">
+                            <i class="icon ln-home3"></i>
+                            <span ng-bind-html="contact.address"></span>
+                        </div>
+                        <a ng-href="tel:{{contact.contactno}}" class="item item-icon-left" ng-if="contact.contactno">
+                            <i class="icon ln-phone2"></i> {{contact.contactno}}
+                        </a>
+                        <a ng-href="mailto:{{contact.email}}" class="item item-icon-left" ng-if="contact.email">
+                            <i class="icon ln-envelope"></i> {{contact.email}}
+                        </a>
+                    </div>
+                </div>
+                <div class="padding-horizontal" ng-if="contact.lat && contact.long">
+                    <button class="button button-block button-positive" ng-click="showMap(contact.lat, contact.long);">
+                        Get Location
+                    </button>
+                </div>
+            </div>
+            <!-- <div class="map" ng-bind-html="contact.description|rawHtml">
+            </div> -->
+        </div>
+    </ion-content>
+</ion-view>

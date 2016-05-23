@@ -1,0 +1,16 @@
+<ion-view view-title="{{article.name}}">
+    <div class="text-center positive middle-align" ng-if="msg != ''">
+        {{msg}}
+    </div>
+    <ion-content>
+      <ion-refresher
+        pulling-text=""
+        on-refresh="refreshData()">
+      </ion-refresher>
+        <img class="full-image" imgloadingsec cache-src="{{article.image|serverimage}}" ng-if="article.image">
+        <div class="padding">
+            <h3>{{article.name}}</h3>
+            <div ng-bind-html="article.content"></div>
+        </div>
+    </ion-content>
+</ion-view>

@@ -1,0 +1,72 @@
+<ion-view view-title="Blog">
+    <div class="text-center positive middle-align" ng-if="msg != ''">
+        {{msg}}
+    </div>
+    <ion-content>
+        <div class="article-view" ng-if="details.provider=='wordpress' && id==0">
+            <div class="relative stable-bg min-height">
+                <img class="full-image" cache-src="img/login-bg.jpg">
+                <div class="gradient-hold full">
+                    <h4 class="light">{{details.author.first_name}} {{details.author.last_name}}</h4>
+                    <p class="light">{{details.date|date : 'MMMM dd, yyyy'}}</p>
+                </div>
+            </div>
+            <div class="padding">
+                <h4>{{details.title}}</h4>
+                <p ng-bind-html="details.content"></p>
+            </div>
+        </div>
+        <div class="article-view" ng-if="details.provider=='wordpressself' && id==0">
+            <div class="relative stable-bg min-height">
+                <img class="full-image" cache-src="img/login-bg.jpg">
+                <div class="gradient-hold full">
+                    <h4 class="light">{{blog.title.rendered}}</h4>
+                    <p class="light">{{details.date|date : 'MMMM dd, yyyy'}}</p>
+                </div>
+            </div>
+            <div class="padding">
+                <h4>{{details.title.rendered}}</h4>
+                <p ng-bind-html="details.content"></p>
+            </div>
+        </div>
+        <div class="article-view" ng-if="id!=0">
+            <div class="relative stable-bg min-height max-height" ng-if="details.image">
+                <img class="full-image" cache-src="{{details.image | serverimage}}">
+                <div class="gradient-hold full">
+                    <h4 class="light">{{details.blogtitle}} {{details.author.last_name}}</h4>
+                    <p class="light">{{details.date | formatdate}}</p>
+                </div>
+            </div>
+            <div class="padding">
+                <!-- <h4>{{details.blogtitle}}</h4> -->
+                <p ng-bind-html="details.content"></p>
+            </div>
+        </div>
+        <div class="article-view" ng-if="details.provider=='tumblr' && id==0">
+            <div class="relative stable-bg min-height">
+                <img class="full-image" cache-src="{{details.photos[0].original_size.url}}">
+                <div class="gradient-hold full">
+                    <h4 class="light" ng-if="details.type=='audio'">{{details.album}}</h4>
+                    <h4 class="light" ng-if="details.type!='audio'">{{details.slug}}</h4>
+                    <p class="light">{{details.date|formatdate}}</p>
+                </div>
+            </div>
+            <div class="padding">
+                <h4 ng-bind-html="details.caption"></h4>
+                <h4 ng-bind-html="details.embed|rawHtml" ng-if="details.embed" ng-if="details.type =='audio'"></h4>
+            </div>
+            <div class="padding" ng-if="details.type =='link'">
+                <h4>Link</h4>
+                <a href="{{details.url}}" target="_blank">{{details.url}}</a>
+            </div>
+            <div class="padding" ng-if="details.type =='quote'">
+                <h4>Quote</h4>
+                <p>{{details.text}}</p>
+            </div>
+            <div class="padding" ng-if="details.type =='video'">
+                <h4>Quote</h4>
+                <div youtube code="details.video.youtube.video_id"></div>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

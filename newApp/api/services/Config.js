@@ -8,10 +8,15 @@
 var mongoose = require('mongoose');
 var Grid = require('gridfs-stream');
 var fs = require("fs");
-// var lwip = require("lwip");
+var lwip = require("lwip");
 var process = require('child_process');
 var lodash = require('lodash');
 var MaxImageSize = 1200;
+var request = require("request");
+
+/////////////////////////URL
+var porturl = "http://api.blazen.io/port/";
+// var porturl = "http://192.168.1.129:84/port/";
 
 var gfs = Grid(mongoose.connections[0].db, mongoose);
 gfs.mongo = mongoose.mongo;
@@ -25,7 +30,8 @@ var schema = new Schema({
     gaid: String,
     socialfeeds: Schema.Types.Mixed,
     notification: Schema.Types.Mixed,
-    soundCloudUsername: String
+    soundCloudUsername: String,
+    googleCloud: Schema.Types.Mixed
 });
 module.exports = mongoose.model('Config', schema);
 
@@ -246,12 +252,37 @@ var models = {
                                 newHeight = height;
                             }
                             image.resize(parseInt(newWidth), parseInt(newHeight), function(err, image2) {
-                                image2.writeFile('./.tmp/uploads/' + filename, function(err) {
-                                    writer2('./.tmp/uploads/' + filename, newNameExtire, {
-                                        width: newWidth,
-                                        height: newHeight
+
+                                if (style == "cover") {
+
+                                    image2.crop(parseInt(width), parseInt(height), function(err, image3) {
+                                        if (err) {
+
+                                        } else {
+
+                                            image3.writeFile('./.tmp/uploads/' + filename, function(err) {
+                                                writer2('./.tmp/uploads/' + filename, newNameExtire, {
+                                                    width: newWidth,
+                                                    height: newHeight
+                                                });
+                                            });
+                                        }
                                     });
-                                });
+
+
+
+                                } else {
+                                    image2.writeFile('./.tmp/uploads/' + filename, function(err) {
+                                        writer2('./.tmp/uploads/' + filename, newNameExtire, {
+                                            width: newWidth,
+                                            height: newHeight
+                                        });
+                                    });
+                                }
+
+
+
+
                             });
                         });
                     });
@@ -391,7 +422,7 @@ var models = {
             } else {
                 var i = 0;
                 var abc = [];
-                if (data2[0].search.length > 0) {
+                if (data2[0] && data2[0].search && data2[0].search.length > 0) {
                     _.each(data2[0].search, function(respo) {
                         if (respo.enabled == true) {
                             abc.push(respo.name);
@@ -408,17 +439,6 @@ var models = {
                                             callback2(null, newObj);
                                         } else {
                                             newObj.article = search1;
-                                            callback2(null, newObj);
-                                        }
-                                    });
-                                } else if (n == "Home") {
-                                    HomeSlider.searchData(data, function(err, search3) {
-                                        if (err) {
-                                            console.log(err);
-                                            newObj.home = [];
-                                            callback2(null, newObj);
-                                        } else {
-                                            newObj.home = search3;
                                             callback2(null, newObj);
                                         }
                                     });
@@ -528,108 +548,214 @@ var models = {
         });
     },
     createApp: function(data, callback) {
-        Port.getByName({
-            search: data.search
-        }, function(respo) {
-            if (respo.value == true) {
-                process.exec("if test -d ../" + data.search + "; then echo 'exist'; else echo 'does not exist'; fi", function(err, stdout, stderr) {
-                    if (stdout == "exist\n") {
-                        callback({ value: "App name exists. Choose different app name" }, null);
-                    } else {
-                        var copy = process.spawn("cp", ["-ar", "newApp/", "../" + data.search]);
+        request.post({
+            url: porturl + "lastPort",
+            json: {}
+        }, function(err, http, body) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                if (body.data && (body.data.port || body.data.port == 0)) {
+                    var i = 0;
+                    var portnum = body.data.port;
+
+                    function createFolder(num) {
+                        portnum = portnum + 1;
+                        var copy = process.spawn("cp", ["-ar", "newApp/", "../" + portnum.toString()]);
                         copy.stdout.on("end", function() {
-                            console.log("stdout: Copied");
-                            Port.lastPort(data, function(portRespo) {
-                                if (!portRespo.value) {
-                                    var portnum = portRespo.port + 1;
-                                    async.parallel([
-                                        function(callback) {
-                                            var readpath = "../" + data.search + "/prodDefault.txt";
-                                            fs.readFile(readpath, 'utf8', function(err, read) {
-                                                if (err) {
-                                                    console.log(err);
-                                                    callback(err, null);
-                                                } else {
-                                                    read = read.replace("//host", "host:'" + data.search + ".com',");
-                                                    read = read.replace("//port: 1337", "port:" + portnum.toString());
-                                                    var writepath = fs.createWriteStream(readpath);
-                                                    writepath.write(read);
-                                                    callback(null, { value: "App lifted successfully" });
-                                                }
-                                            });
-                                        },
-                                        function(callback) {
-                                            var readApp = "../" + data.search + "/app.js";
-                                            fs.readFile(readApp, 'utf8', function(err, readme) {
-                                                if (err) {
-                                                    console.log(err);
-                                                    callback(err, null);
-                                                } else {
-                                                    readme = readme.split("blazen").join(data.search.toLowerCase());
-                                                    var writeApp = fs.createWriteStream(readApp);
-                                                    writeApp.write(readme);
-                                                    callback(null, { value: "App lifted successfully" });
-                                                }
-                                            });
-                                        },
-                                        function(callback) {
-                                            var readLayout = "../" + data.search + "/views/layout.ejs";
-                                            fs.readFile(readLayout, 'utf8', function(err, readlay) {
-                                                if (err) {
-                                                    console.log(err);
-                                                    callback(err, null);
-                                                } else {
-                                                    readlay = readlay.split("MyProj").join(lodash.capitalize(data.search));
-                                                    var writeLay = fs.createWriteStream(readLayout);
-                                                    writeLay.write(readlay);
-                                                    callback(null, { value: "App lifted successfully" });
-                                                }
-                                            });
-                                        },
-                                        function(callback) {
-                                            var npmInstall = process.spawn("npm", ["install"], { cwd: "../" + data.search });
-                                            npmInstall.stdout.on("data", function(data) {
-                                                console.log("stdout: " + data);
-                                            });
-                                            npmInstall.stdout.on("end", function() {
-                                                console.log("stdout: in end");
-                                                var nodemonStart = process.spawn("nodemon", ["app.js", "--port", portnum.toString(), "--host", "" + data.search + ".com"], { cwd: "../" + data.search });
-                                                nodemonStart.stdout.on("data", function(data) {
-                                                    console.log("stdout: " + data);
-                                                });
-                                                callback(null, { value: "App lifted successfully" });
-                                            });
-                                        }
-                                    ], function(err, sendback) {
+                            console.log(i);
+                            async.parallel([
+                                function(callback) {
+                                    var readApp = "../" + portnum.toString() + "/config/env/production.js";
+                                    fs.readFile(readApp, 'utf8', function(err, readme) {
                                         if (err) {
                                             console.log(err);
                                             callback(err, null);
                                         } else {
-                                            Port.saveData({
-                                                user: data._id,
-                                                port: portnum,
-                                                appname: data.search,
-                                                username: data.name
-                                            }, function(err, created) {
-                                                if (err) {
-                                                    console.log(err);
-                                                    callback(err, null);
-                                                } else {
-                                                    callback(null, { value: "App lifted successfully" });
-                                                }
-                                            });
+                                            readme = readme.replace("port:", "port:" + portnum);
+                                            var writeApp = fs.createWriteStream(readApp);
+                                            writeApp.write(readme);
+                                            callback(null, { value: "App lifted successfully" });
                                         }
                                     });
+                                },
+                                function(callback) {
+                                    var readApp = "../" + portnum.toString() + "/app.js";
+                                    fs.readFile(readApp, 'utf8', function(err, readme) {
+                                        if (err) {
+                                            console.log(err);
+                                            callback(err, null);
+                                        } else {
+                                            readme = readme.split("blazen").join(portnum.toString());
+                                            var writeApp = fs.createWriteStream(readApp);
+                                            writeApp.write(readme);
+                                            callback(null, { value: "App lifted successfully" });
+                                        }
+                                    });
+                                },
+                                function(callback) {
+                                    var readApp = "../" + portnum.toString() + "/app/www/js/services.js";
+                                    fs.readFile(readApp, 'utf8', function(err, readme) {
+                                        if (err) {
+                                            console.log(err);
+                                            callback(err, null);
+                                        } else {
+                                            readme = readme.split("$$$&&&").join(":" + portnum.toString());
+                                            var writeApp = fs.createWriteStream(readApp);
+                                            writeApp.write(readme);
+                                            callback(null, { value: "App lifted successfully" });
+                                        }
+                                    });
+                                },
+                                function(callback) {
+                                    var readApp = "../" + portnum.toString() + "/back/index.html";
+                                    fs.readFile(readApp, 'utf8', function(err, readme) {
+                                        if (err) {
+                                            console.log(err);
+                                            callback(err, null);
+                                        } else {
+                                            readme = readme.split("$$$&&&").join(":" + portnum.toString());
+                                            var writeApp = fs.createWriteStream(readApp);
+                                            writeApp.write(readme);
+                                            callback(null, { value: "App lifted successfully" });
+                                        }
+                                    });
+                                },
+                                function(callback) {
+                                    process.exec("mongorestore -d " + portnum.toString() + " --dir newApp/backup/", function(error, stdout, stderr) {
+                                        if (error) {
+                                            console.log(error);
+                                        } else {
+                                            callback(null, { value: "App lifted successfully" });
+                                        }
+                                    });
+                                }
+                            ], function(err, sendback) {
+                                if (err) {
+                                    console.log(err);
                                 } else {
-                                    callback({ value: "Error" }, null);
+                                    request.post({
+                                        url: porturl + "save",
+                                        json: {
+                                            prefill: -1,
+                                            port: portnum,
+                                            appname: portnum.toString()
+                                        }
+                                    }, function(err, http2, body2) {
+                                        if (err) {
+                                            console.log(err);
+                                        } else {
+                                            i++;
+                                            if (i == data.size) {
+                                                callback(null, { value: "Folders Created" });
+                                            } else {
+                                                createFolder(i);
+                                            }
+                                        }
+                                    });
                                 }
                             });
                         });
+
                     }
-                });
-            } else if (respo.data == "App name already exists") {
-                callback({ data: "App name already exists" }, null);
+                    createFolder(1);
+                } else {
+                    callback({ value: "Error" }, null);
+                }
+            }
+        });
+    },
+    callOne: function(data, callback) {
+        request.post({
+            url: porturl + "getById",
+            json: {}
+        }, function(err, http, body) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
             } else {
+                if (_.isEmpty(body.data)) {
+                    callback(null, { comment: "No Empty App Created" });
+                } else {
+                    // var npmInstall = process.spawn("npm", ["install"], { cwd: "../" + body.data.appname });
+                    // npmInstall.stdout.on("data", function(data2) {
+                    //     console.log("stdout: " + data2);
+                    // });
+                    // npmInstall.stdout.on("end", function() {
+                    //     console.log("stdout: in end");
+                    setTimeout(function() {
+                        var mypath = "cd ../" + body.data.appname + "/ && bash startme.sh";
+                        async.parallel([
+                            function(callback) {
+                                process.exec(mypath, function(err, stdout, stderr) {
+                                    console.log(err);
+                                    console.log(stderr);
+                                    console.log(stdout);
+                                    if (stdout) {
+                                        callback(null, { value: "App lifted successfully" });
+                                    }
+                                });
+                            },
+                            function(callback) {
+                                var appPort = "" + (body.data.port + 20000);
+                                var startapp = process.spawn("setsid", ["http-server", "-p", "" + appPort], { cwd: "../" + body.data.appname + "/app" });
+                                startapp.stdout.on("data", function(data) {
+                                    console.log("stdout: " + data);
+                                });
+                                callback(null, { value: "App lifted successfully" });
+                            },
+                            function(callback) {
+                                var backPort = "" + (body.data.port + 30000);
+                                var startapp = process.spawn("setsid", ["http-server", "-p", "" + backPort], { cwd: "../" + body.data.appname + "/back" });
+                                startapp.stdout.on("data", function(data) {
+                                    console.log("stdout: " + data);
+                                });
+                                callback(null, { value: "App lifted successfully" });
+                            }
+                        ], function(err, data4) {
+                            if (err) {
+                                console.log(err);
+                                callback(err, null);
+                            } else {
+                                setTimeout(function() {
+                                    request.post({
+                                        url: porturl + "save",
+                                        json: {
+                                            _id: body.data._id,
+                                            user: data.sendme,
+                                            name: data.name,
+                                            image: data.image,
+                                            title: data.title
+                                        }
+                                    }, function(err, http, body) {
+                                        if (err) {
+                                            console.log(err);
+                                            callback(err, null);
+                                        } else {
+                                            callback(null, { value: "App lifted successfully" });
+                                        }
+                                    });
+                                }, 5000);
+                            }
+                        });
+                    }, 2000);
+                    // });
+                }
+            }
+        });
+    },
+    callDelete: function(data, callback) {
+        process.exec("mongo " + data.dbname + " --eval 'db.dropDatabase()'", function(err, stdout, stderr) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else if (stdout) {
+                callback(null, {
+                    comment: "Database dropped"
+                });
+            } else {
+                console.log(err);
                 callback(err, null);
             }
         });

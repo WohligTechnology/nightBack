@@ -8,8 +8,9 @@ var schema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    username: String,
-    appname: String
+    name: String,
+    appname: String,
+    prefill: Number
 });
 
 module.exports = mongoose.model('Port', schema);
@@ -50,27 +51,24 @@ var models = {
             "_id": data._id
         }).exec(callback);
     },
-    getByName: function(data, callback) {
-        Port.count({
-            appname: data.search
-        }).exec(function(err, found) {
+    getById: function(data, callback) {
+        Port.findOne({
+            appname: {
+                $exists: true
+            },
+            user: {
+                $exists: false
+            },
+            prefill: -1
+        }).sort({ _id: 1 }).limit(1).exec(function(err, found) {
             if (err) {
                 console.log(err);
-                callback({
-                    value: false,
-                    data: err
-                });
+                callback(err, null);
             } else {
-                if (found === 0) {
-                    callback({
-                        value: true,
-                        data: "App name can be used"
-                    });
+                if (_.isEmpty(found)) {
+                    callback(null, {});
                 } else {
-                    callback({
-                        value: false,
-                        data: "App name already exists"
-                    });
+                    callback(null, found);
                 }
             }
         });
@@ -84,16 +82,13 @@ var models = {
         }).limit(1).exec(function(err, data2) {
             if (err) {
                 console.log(err);
-                callback({
-                    value: false,
-                    comment: "Error"
-                });
+                callback(err, null);
             } else if (_.isEmpty(data2)) {
-                callback({
-                    port: 1338
+                callback(null, {
+                    port: 0
                 });
             } else {
-                callback(data2);
+                callback(null, data2);
             }
         });
     }

@@ -48,16 +48,16 @@ module.exports = {
                 });
             } else {
                 if (data._id) {
-                    req.session.user = data;
+                    req.session.passport = {
+                        user: data
+                    };
                     req.session.save();
-                    console.log(req.session.user);
                     res.json({
                         data: "Login Successful",
                         value: true
                     });
                 } else {
-                    req.session.user = {};
-
+                    req.session.passport = {};
                     res.json({
                         data: {},
                         value: false
@@ -82,10 +82,13 @@ module.exports = {
         }
     },
     profile: function(req, res) {
-        var user = req.session.user;
-        console.log("////////////////", req.session.user);
-        if (user) {
-            res.json(user);
+        if (req.session.passport) {
+            var user = req.session.passport.user;
+            if (user) {
+                res.json(user);
+            } else {
+                res.json({});
+            }
         } else {
             res.json({});
         }
@@ -113,7 +116,7 @@ module.exports = {
                     value: false
                 });
             } else {
-                req.session.user = data;
+                req.session.passport = { user: data };
                 req.session.save(function(err) {
                     if (err) {
                         res.json(err);
@@ -138,7 +141,7 @@ module.exports = {
                     value: false
                 });
             } else {
-                req.session.user = data;
+                req.session.passport = { user: data };
                 // console.log(req.session);
                 req.session.save(function(err) {
                     if (err) {
@@ -162,7 +165,7 @@ module.exports = {
                     value: false
                 });
             } else {
-                req.session.user = data;
+                req.session.passport = { user: data };
                 // console.log(req.session);
                 req.session.save(function(err) {
                     if (err) {
@@ -191,7 +194,7 @@ module.exports = {
                     value: false
                 });
             } else {
-                req.session.user = data;
+                req.session.passport = { user: data };
                 // console.log(req.session);
                 req.session.save(function(err) {
                     if (err) {
@@ -232,8 +235,37 @@ module.exports = {
             });
         }
     },
-    //////////////////////////////MOBILE
-    saveMob: function(req, res) {
+    getOne: function(req, res) {
+        var callback = function(err, data) {
+            if (err) {
+                res.json({
+                    error: err,
+                    value: false
+                });
+            } else {
+                res.json({
+                    data: data,
+                    value: true
+                });
+            }
+        };
+        if (req.body) {
+            if (req.body._id && req.body._id != "") {
+                User.getOne(req.body, callback);
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid Id"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid Call"
+            });
+        }
+    },
+    notificationSetting: function(data, callback) {
         var callback = function(err, data) {
             if (err || _.isEmpty(data)) {
                 res.json({
@@ -241,7 +273,7 @@ module.exports = {
                     value: false
                 });
             } else {
-                req.session.user = data;
+                req.session.passport = { user: data };
 
                 res.json({
                     data: data,
@@ -251,8 +283,50 @@ module.exports = {
         };
         if (req.body) {
             if (req.body._id && req.body._id == "0") {
-                if (req.session.user) {
-                    req.body._id = req.session.user._id;
+                if (req.session.passport) {
+                    req.body._id = req.session.passport.user._id;
+                    callSave();
+                } else {
+                    res.json({
+                        value: false,
+                        data: "User not logged-in"
+                    });
+                }
+            } else {
+                callSave();
+            }
+
+            function callSave() {
+                User.notificationSetting(req.body, callback);
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    //////////////////////////////MOBILE
+    saveMob: function(req, res) {
+        var callback = function(err, data) {
+            if (err || _.isEmpty(data)) {
+                res.json({
+                    error: err,
+                    value: false
+                });
+            } else {
+                req.session.passport = { user: data };
+
+                res.json({
+                    data: data,
+                    value: true
+                });
+            }
+        };
+        if (req.body) {
+            if (req.body._id && req.body._id == "0") {
+                if (req.session.passport) {
+                    req.body._id = req.session.passport.user._id;
                     callSave();
                 } else {
                     res.json({
@@ -279,8 +353,8 @@ module.exports = {
             Config.GlobalCallback(err, data, res);
         }
         if (req.body) {
-            if (req.session.user) {
-                req.body._id = req.session.user._id;
+            if (req.session.passport) {
+                req.body._id = req.session.passport.user._id;
                 User.getOneMob(req.body, callback);
             } else {
                 res.json({
@@ -300,8 +374,8 @@ module.exports = {
             Config.GlobalCallback(err, data, res);
         }
         if (req.body) {
-            if (req.session.user) {
-                req.body._id = req.session.user._id;
+            if (req.session.passport) {
+                req.body._id = req.session.passport.user._id;
                 if (req.body.password && req.body.password != "" && req.body.editpassword && req.body.editpassword != "") {
                     User.changePasswordMob(req.body, callback);
                 } else {
@@ -350,6 +424,43 @@ module.exports = {
             res.json({
                 value: false,
                 data: "Invalid call"
+            });
+        }
+    },
+
+    getLatest: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body) {
+            User.getLatest(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    getCategory: function(req, res) {
+        var callback = function(err, data) {
+            if (err) {
+                res.json({
+                    error: err,
+                    value: false
+                });
+            } else {
+                res.json({
+                    data: data,
+                    value: true
+                });
+            }
+        };
+        if (req.body) {
+            User.getCategory(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid Call"
             });
         }
     },

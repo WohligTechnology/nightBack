@@ -1,0 +1,85 @@
+<ion-view class="login-bg">
+    <ion-content>
+        <div class="login-logo light">
+            Business<span class="bold positive">App</span>
+        </div>
+        <div class="login-tab">
+            <div class="button-bar" ng-show="logindata.email">
+                <a class="button button-positive button-outline" ng-class="{'underline':tab=='signin'}" ng-click="tabchange('signin',1)"><span class="light">Sign In</span></a>
+                <a class="button button-positive button-outline" ng-class="{'underline':tab=='signup'}" ng-click="tabchange('signup',2)"><span class="light">Sign Up</span></a>
+            </div>
+            <div class="login" ng-show="tab=='signin'">
+                <div class="list" ng-show="logindata.email">
+                    <label class="item item-input item-floating-label" ng-class="allvalidation[0].validation">
+                        <span class="input-label">Email</span>
+                        <i class="icon ln-user"></i>
+                        <input type="email" placeholder="Email" ng-model="signin.username">
+                    </label>
+                    <label class="item item-input item-floating-label" ng-class="allvalidation[1].validation">
+                        <span class="input-label">Password</span>
+                        <i class="icon ln-lock"></i>
+                        <input type="password" placeholder="Password" ng-model="signin.password">
+                    </label>
+                </div>
+                <div class="login-btn footer">
+                    <button class="button button-block button-positive" ng-click="signinsubmit(signin);" ng-show="logindata.email">
+                        Sign In
+                    </button>
+                    <p class="light" ng-click="forgotpass()" ng-show="logindata.email">Forgot password?</p>
+                    <div class="or text-center" ng-show="logindata.facebook || logindata.twitter || logindata.google  || logindata.instagram">
+                        <p>- OR -</p>
+                    </div>
+                    <div class="btn-set" ng-show="logindata.facebook">
+                        <button ng-click="facebooklogin()" class="button button-full button-positive-facebook button-block">
+                            Sign in with Facebook
+                        </button>
+                    </div>
+                    <div class="btn-set" ng-show="logindata.twitter">
+                        <button ng-click="twitterlogin()" class="button button-full button-positive-twitter button-block">
+                            Sign in with Twitter
+                        </button>
+                    </div>
+                    <div class="btn-set" ng-show="logindata.google">
+                        <button ng-click="googlelogin()" class="button button-full button-positive-google button-block">
+                            Sign in with Google
+                        </button>
+                    </div>
+                    <div class="btn-set" ng-show="logindata.instagram">
+                        <button ng-click="instagramlogin()" class="button button-full button-positive-instagram button-block">
+                            Sign in with Instagram
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="login" ng-show="tab=='signup'">
+                <div class="list">
+                    <label class="item item-input item-floating-label" ng-class="allvalidation[0].validation">
+                        <span class="input-label">Name</span>
+                        <i class="icon ln-user"></i>
+                        <input type="text" placeholder="Name" ng-model="signup.username">
+                    </label>
+                    <label class="item item-input item-floating-label" ng-class="allvalidation[1].validation">
+                        <span class="input-label">Email</span>
+                        <i class="icon ln-envelope"></i>
+                        <input type="email" placeholder="Email" ng-model="signup.email">
+                    </label>
+                    <label class="item item-input item-floating-label" ng-class="allvalidation[2].validation">
+                        <span class="input-label">Date of Birth</span>
+                        <i class="icon ln-gift"></i>
+                        <input type="text" onfocus="(this.type='date')" placeholder="Date of Birth" ng-model="signup.dob">
+                    </label>
+                    <label class="item item-input item-floating-label" ng-class="allvalidation[3].validation">
+                        <span class="input-label">Password</span>
+                        <i class="icon ln-lock"></i>
+                        <input type="password" placeholder="Password" ng-model="signup.password">
+                    </label>
+                </div>
+                <div class="login-btn footer">
+                    <button class="button button-block button-positive" ng-click="signupsubmit(signup);">
+                        Sign up
+                    </button>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>
