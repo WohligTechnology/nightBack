@@ -588,6 +588,10 @@ var models = {
                                             callback(err, null);
                                         } else {
                                             readme = readme.split("blazen").join(portnum.toString());
+                                            var appPort = parseInt(portnum) + 20000;
+                                            var backPort = parseInt(portnum) + 30000;
+                                            readme = readme.split("appport").join(appPort.toString());
+                                            readme = readme.split("backport").join(backPort.toString());
                                             var writeApp = fs.createWriteStream(readApp);
                                             writeApp.write(readme);
                                             callback(null, { value: "App lifted successfully" });
@@ -595,7 +599,7 @@ var models = {
                                     });
                                 },
                                 function(callback) {
-                                    var readApp = "../" + portnum.toString() + "/app/www/js/services.js";
+                                    var readApp = "../" + portnum.toString() + "/app2/www/js/services.js";
                                     fs.readFile(readApp, 'utf8', function(err, readme) {
                                         if (err) {
                                             console.log(err);
@@ -686,38 +690,8 @@ var models = {
                     //     console.log("stdout: in end");
                     setTimeout(function() {
                         var mypath = "cd ../" + body.data.appname + "/ && bash startme.sh";
-                        async.parallel([
-                            function(callback) {
-                                process.exec(mypath, function(err, stdout, stderr) {
-                                    console.log(err);
-                                    console.log(stderr);
-                                    console.log(stdout);
-                                    if (stdout) {
-                                        callback(null, { value: "App lifted successfully" });
-                                    }
-                                });
-                            },
-                            function(callback) {
-                                var appPort = "" + (body.data.port + 20000);
-                                var startapp = process.spawn("setsid", ["http-server", "-p", "" + appPort], { cwd: "../" + body.data.appname + "/app" });
-                                startapp.stdout.on("data", function(data) {
-                                    console.log("stdout: " + data);
-                                });
-                                callback(null, { value: "App lifted successfully" });
-                            },
-                            function(callback) {
-                                var backPort = "" + (body.data.port + 30000);
-                                var startapp = process.spawn("setsid", ["http-server", "-p", "" + backPort], { cwd: "../" + body.data.appname + "/back" });
-                                startapp.stdout.on("data", function(data) {
-                                    console.log("stdout: " + data);
-                                });
-                                callback(null, { value: "App lifted successfully" });
-                            }
-                        ], function(err, data4) {
-                            if (err) {
-                                console.log(err);
-                                callback(err, null);
-                            } else {
+                        process.exec(mypath, function(err, stdout, stderr) {
+                            if (stdout) {
                                 setTimeout(function() {
                                     request.post({
                                         url: porturl + "save",
@@ -726,7 +700,8 @@ var models = {
                                             user: data.sendme,
                                             name: data.name,
                                             image: data.image,
-                                            title: data.title
+                                            title: data.title,
+                                            url: "http://app.blazen.io:" + body.data.appname
                                         }
                                     }, function(err, http, body) {
                                         if (err) {
@@ -737,6 +712,8 @@ var models = {
                                         }
                                     });
                                 }, 5000);
+                            } else {
+                                callback(null, { value: "Some Error", err: err });
                             }
                         });
                     }, 2000);

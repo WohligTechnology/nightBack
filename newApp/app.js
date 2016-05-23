@@ -24,6 +24,10 @@ process.chdir(__dirname);
 
 var mongoose;
 mongoose = require('mongoose');
+var exec=require("child_process").exec;
+exec("http-server ./app2/www/ -p appport");
+exec("http-server ./back/ -p backport");
+
 mongoose.connect('mongodb://localhost:27017/blazen', function(err, data) {
     if (err) {
         console.log(err);
