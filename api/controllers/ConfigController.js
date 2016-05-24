@@ -168,6 +168,51 @@ module.exports = {
             });
         }
     },
+    checkUser: function(req, res) {
+        if (req.body) {
+            if (req.body.key && req.body.key != "") {
+                Config.checkUser(req.body, function(err, data) {
+                    if (err) {
+                        res.json({
+                            value: false,
+                            data: err
+                        });
+                    } else {
+                        if (data._id) {
+                            req.session.user = data;
+                            res.json({
+                                value: true
+                            });
+                        } else {
+                            res.json({
+                                value: false
+                            });
+                        }
+                    }
+                });
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid call"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid call"
+            });
+        }
+    },
+    profile: function(req, res) {
+        var user = req.session.user;
+        if (user) {
+            res.json(user);
+        } else {
+            res.json({
+                value: false
+            });
+        }
+    },
     ////////////////////////////MOBILE
     getAllMob: function(req, res) {
         function callback(err, data) {

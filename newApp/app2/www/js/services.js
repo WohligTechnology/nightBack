@@ -1,5 +1,5 @@
 var vigzserver = "http://app.blazen.io$$$&&&/";
-// var vigzserver = "http://192.168.1.129$$$&&&/";
+var vigzserver = "http://192.168.1.129$$$&&&/";
 var adminimage = vigzserver + "upload/readFile?file=";
 
 var foods = [];

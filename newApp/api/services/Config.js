@@ -11,12 +11,17 @@ var fs = require("fs");
 var lwip = require("lwip");
 var process = require('child_process');
 var lodash = require('lodash');
+var moment = require('moment');
+var validUrl = require('valid-url');
+var objid = require('mongodb').ObjectID;
 var MaxImageSize = 1200;
 var request = require("request");
+var crypto = require('crypto');
+var format = 'aes192';
 
 /////////////////////////URL
 var porturl = "http://api.blazen.io/port/";
-// var porturl = "http://192.168.1.129:84/port/";
+var porturl = "http://192.168.1.129:84/port/";
 
 var gfs = Grid(mongoose.connections[0].db, mongoose);
 gfs.mongo = mongoose.mongo;
@@ -588,6 +593,10 @@ var models = {
                                             callback(err, null);
                                         } else {
                                             readme = readme.split("blazen").join(portnum.toString());
+                                            var appPort = parseInt(portnum) + 20000;
+                                            var backPort = parseInt(portnum) + 30000;
+                                            readme = readme.split("appport").join(appPort.toString());
+                                            readme = readme.split("backport").join(backPort.toString());
                                             var writeApp = fs.createWriteStream(readApp);
                                             writeApp.write(readme);
                                             callback(null, { value: "App lifted successfully" });
@@ -595,7 +604,7 @@ var models = {
                                     });
                                 },
                                 function(callback) {
-                                    var readApp = "../" + portnum.toString() + "/app/www/js/services.js";
+                                    var readApp = "../" + portnum.toString() + "/app2/www/js/services.js";
                                     fs.readFile(readApp, 'utf8', function(err, readme) {
                                         if (err) {
                                             console.log(err);
@@ -686,38 +695,8 @@ var models = {
                     //     console.log("stdout: in end");
                     setTimeout(function() {
                         var mypath = "cd ../" + body.data.appname + "/ && bash startme.sh";
-                        async.parallel([
-                            function(callback) {
-                                process.exec(mypath, function(err, stdout, stderr) {
-                                    console.log(err);
-                                    console.log(stderr);
-                                    console.log(stdout);
-                                    if (stdout) {
-                                        callback(null, { value: "App lifted successfully" });
-                                    }
-                                });
-                            },
-                            function(callback) {
-                                var appPort = "" + (body.data.port + 20000);
-                                var startapp = process.spawn("setsid", ["http-server", "-p", "" + appPort], { cwd: "../" + body.data.appname + "/app" });
-                                startapp.stdout.on("data", function(data) {
-                                    console.log("stdout: " + data);
-                                });
-                                callback(null, { value: "App lifted successfully" });
-                            },
-                            function(callback) {
-                                var backPort = "" + (body.data.port + 30000);
-                                var startapp = process.spawn("setsid", ["http-server", "-p", "" + backPort], { cwd: "../" + body.data.appname + "/back" });
-                                startapp.stdout.on("data", function(data) {
-                                    console.log("stdout: " + data);
-                                });
-                                callback(null, { value: "App lifted successfully" });
-                            }
-                        ], function(err, data4) {
-                            if (err) {
-                                console.log(err);
-                                callback(err, null);
-                            } else {
+                        process.exec(mypath, function(err, stdout, stderr) {
+                            if (stdout) {
                                 setTimeout(function() {
                                     request.post({
                                         url: porturl + "save",
@@ -726,17 +705,20 @@ var models = {
                                             user: data.sendme,
                                             name: data.name,
                                             image: data.image,
-                                            title: data.title
+                                            title: data.title,
+                                            url: "http://app.blazen.io:" + body.data.appname
                                         }
                                     }, function(err, http, body) {
                                         if (err) {
                                             console.log(err);
                                             callback(err, null);
                                         } else {
-                                            callback(null, { value: "App lifted successfully" });
+                                            callback(null, { comment: "App lifted successfully" });
                                         }
                                     });
                                 }, 5000);
+                            } else {
+                                callback(null, { comment: "Some Error", err: err });
                             }
                         });
                     }, 2000);
@@ -759,6 +741,52 @@ var models = {
                 callback(err, null);
             }
         });
+    },
+    checkUser: function(data, callback) {
+        var decipher = crypto.createDecipher(format, "lenovo g50");
+        var dec = decipher.update(data.key, 'hex', 'utf8');
+        dec += decipher.final('utf8');
+        var split = dec.split("|");
+        if (split.length == 4) {
+            if (_.isNaN(parseInt(split[0]))) {
+                callback({ message: "Key Incorrect" }, {});
+            } else if (!validUrl.isUri(split[1])) {
+                callback({ message: "Key Incorrect" }, {});
+            } else if (!moment().isBefore(moment(new Date(split[2])).add(1, "days"))) {
+                callback({ message: "Key Incorrect" }, {});
+            } else if (!objid.isValid(split[3])) {
+                callback({ message: "Key Incorrect" }, {});
+            } else {
+                request.post({
+                    url: porturl + "getApp2",
+                    json: {
+                        user: split[3]
+                    }
+                }, function(err, http, body) {
+                    if (err) {
+                        console.log(err);
+                        callback(err, null);
+                    } else {
+                        if (body.data && body.data.length > 0) {
+                            var index = lodash._.findIndex(body.data, function(r) {
+                                return r.appname == split[0];
+                            });
+                            if (index === -1) {
+                                callback(null, {});
+                            } else {
+                                var mydata = {};
+                                mydata = body.data[index];
+                                callback(null, mydata);
+                            }
+                        } else {
+                            callback({ message: "App Not Found" }, {});
+                        }
+                    }
+                });
+            }
+        } else {
+            callback({ message: "Key Incorrect" }, {});
+        }
     },
     ////////////////////////////////MOBILE
     getAllMob: function(data, callback) {
