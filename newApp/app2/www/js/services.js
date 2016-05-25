@@ -101,7 +101,7 @@ angular.module('starter.services', ['httpService'])
           'comment': enquiry.content
         };
         return $http({
-          url: vigzserver + "enquiry/savemob",
+          url: vigzserver + "enquiry/saveMob",
           method: "POST",
           data: data
         }).success(callback).error(errCallback);

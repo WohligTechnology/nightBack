@@ -11,99 +11,113 @@
 
 module.exports.http = {
 
-  /****************************************************************************
-   *                                                                           *
-   * Express middleware to use for every Sails request. To add custom          *
-   * middleware to the mix, add a function to the middleware config object and *
-   * add its key to the "order" array. The $custom key is reserved for         *
-   * backwards-compatibility with Sails v0.9.x apps that use the               *
-   * `customMiddleware` config option.                                         *
-   *                                                                           *
-   ****************************************************************************/
-
-  middleware: {
-
-    /***************************************************************************
-     *                                                                          *
-     * The order in which middleware should be run for HTTP request. (the Sails *
-     * router is invoked by the "router" middleware below.)                     *
-     *                                                                          *
-     ***************************************************************************/
-
-    order: [
-      'startRequestTimer',
-      'cookieParser',
-      'session',
-      'bodyParser',
-      'handleBodyParserError',
-      'myRequestLogger',
-      'compress',
-      'methodOverride',
-      'poweredBy',
-      '$custom',
-      'router',
-      'www',
-      'favicon',
-      '404',
-      '500'
-    ],
-
     /****************************************************************************
      *                                                                           *
-     * Example custom middleware; logs each request to the console.              *
+     * Express middleware to use for every Sails request. To add custom          *
+     * middleware to the mix, add a function to the middleware config object and *
+     * add its key to the "order" array. The $custom key is reserved for         *
+     * backwards-compatibility with Sails v0.9.x apps that use the               *
+     * `customMiddleware` config option.                                         *
      *                                                                           *
      ****************************************************************************/
-    myRequestLogger: function(req, res, next) {
 
-      res.callback = function(err, data) {
-        if (err) {
-          res.json({
-            error: err,
-            value: false
-          });
-        } else {
-          res.json({
-            data: data,
-            value: true
-          });
+    middleware: {
+
+        /***************************************************************************
+         *                                                                          *
+         * The order in which middleware should be run for HTTP request. (the Sails *
+         * router is invoked by the "router" middleware below.)                     *
+         *                                                                          *
+         ***************************************************************************/
+
+        order: [
+            'startRequestTimer',
+            'cookieParser',
+            'session',
+            'bodyParser',
+            'handleBodyParserError',
+            'myRequestLogger',
+            'compress',
+            'methodOverride',
+            'poweredBy',
+            '$custom',
+            'router',
+            'www',
+            'favicon',
+            '404',
+            '500'
+        ],
+
+        /****************************************************************************
+         *                                                                           *
+         * Example custom middleware; logs each request to the console.              *
+         *                                                                           *
+         ****************************************************************************/
+        myRequestLogger: function(req, res, next) {
+
+            res.callback = function(err, data) {
+                if (err) {
+                    res.json({
+                        error: err,
+                        value: false
+                    });
+                } else {
+                    res.json({
+                        data: data,
+                        value: true
+                    });
+                }
+            };
+            var arr = ["/videogallery/getAllMob", "/videogallery/getOneMob", "/blog/getAllMob", "/blog/getOneMob", "/photogallery/getAllMob", "/photogallery/getOneMob", "/event/getAllMob", "/event/getOneMob", "/notification/getAllMob", "/contact/getAllMob", "/enquiry/saveMob", "/user/getOneMob", "/user/login", "/user/saveMob", "/user/changePasswordMob", "/article/getOneMob", "/config/searchData", "/navigation/getAll", "/config/getAll", "/homeslider/getAll", "/introslider/getAll", "/user/profile", "/user/logout", "/config/urlToJson", "/config/checkUser", "/upload/readFile","/config/profile"];
+            var index = arr.indexOf(req.path);
+            if (index != -1) {
+                next();
+            } else {
+                if (_.isEmpty(req.session.user)) {
+                    res.json(500, {
+                        error: "Invalid format",
+                        value: false
+                    });
+                } else {
+                    next();
+                }
+            }
+            // if (req.path != "/config/checkUser") {
+            //     if (_.isEmpty(req.session.user)) {
+            //         res.json(500, {
+            //             error: "Invalid format",
+            //             value: false
+            //         });
+            //     } else {
+            //         next();
+            //     }
+            // } else {
+            //     next();
+            // }
         }
-      };
-      if (req.path != "config/checkUser") {
-        if (_.isEmpty(req.session.user)) {
-          res.json(500,{
-            error: "Invalid format",
-            value: false
-          });
-        } else {
-          next();
-        }
-      } else {
-        next();
-      }
-    }
+
+        /***************************************************************************
+         *                                                                          *
+         * The body parser that will handle incoming multipart HTTP requests. By    *
+         * default as of v0.10, Sails uses                                          *
+         * [skipper](http://github.com/balderdashy/skipper). See                    *
+         * http://www.senchalabs.org/connect/multipart.html for other options.      *
+         *                                                                          *
+         ***************************************************************************/
+
+        // bodyParser: require('skipper')
+
+    },
 
     /***************************************************************************
      *                                                                          *
-     * The body parser that will handle incoming multipart HTTP requests. By    *
-     * default as of v0.10, Sails uses                                          *
-     * [skipper](http://github.com/balderdashy/skipper). See                    *
-     * http://www.senchalabs.org/connect/multipart.html for other options.      *
+     * The number of seconds to cache flat files on disk being served by        *
+     * Express static middleware (by default, these files are in `.tmp/public`) *
+     *                                                                          *
+     * The HTTP static cache is only active in a 'production' environment,      *
+     * since that's the only time Express will cache flat-files.                *
      *                                                                          *
      ***************************************************************************/
 
-    // bodyParser: require('skipper')
-
-  },
-
-  /***************************************************************************
-   *                                                                          *
-   * The number of seconds to cache flat files on disk being served by        *
-   * Express static middleware (by default, these files are in `.tmp/public`) *
-   *                                                                          *
-   * The HTTP static cache is only active in a 'production' environment,      *
-   * since that's the only time Express will cache flat-files.                *
-   *                                                                          *
-   ***************************************************************************/
-
-  cache: 31557600000
+    cache: 31557600000
 };
