@@ -70,7 +70,10 @@ module.exports.http = {
       };
       if (req.path != "config/checkUser") {
         if (_.isEmpty(req.session.user)) {
-          res.badRequest();
+          res.json(500,{
+            error: "Invalid format",
+            value: false
+          });
         } else {
           next();
         }
