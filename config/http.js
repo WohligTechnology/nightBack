@@ -56,18 +56,18 @@ module.exports.http = {
     myRequestLogger: function(req, res, next) {
 
       res.callback = function(err, data) {
-               if (err) {
-                   res.json({
-                       error: err,
-                       value: false
-                   });
-               } else {
-                   res.json({
-                       data: data,
-                       value: true
-                   });
-               }
-           };
+        if (err) {
+          res.json({
+            error: err,
+            value: false
+          });
+        } else {
+          res.json({
+            data: data,
+            value: true
+          });
+        }
+      };
       if (req.path != "config/checkUser") {
         if (_.isEmpty(req.session.user)) {
           res.badRequest();
