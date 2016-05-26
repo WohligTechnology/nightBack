@@ -133,6 +133,7 @@ module.exports = {
             Config.GlobalCallback(err, data, res);
         }
         if (req.body) {
+            console.log(req.body);
             if (req.body.sendme && req.body.sendme != "") {
                 Config.callOne(req.body, callback);
             } else {
