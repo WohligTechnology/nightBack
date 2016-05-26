@@ -679,14 +679,11 @@ var models = {
         });
     },
     callOne: function(data, callback) {
-        console.log(porturl);
         request.post({
             url: porturl + "getById",
             rejectUnauthorized: false,
             json: {}
         }, function(err, http, body) {
-            console.log(err);
-            console.log(body);
             if (err) {
                 console.log(err);
                 callback(err, null);

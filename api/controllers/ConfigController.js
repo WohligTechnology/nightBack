@@ -93,8 +93,8 @@ module.exports = {
         }
     },
     createApp: function(req, res) {
-        req.connection.setTimeout(6000000);
-        res.connection.setTimeout(6000000);
+        req.connection.setTimeout(600000000);
+        res.connection.setTimeout(600000000);
 
         function callback(err, data) {
             if (err) {
