@@ -677,6 +677,7 @@ var models = {
         });
     },
     callOne: function(data, callback) {
+        console.log(porturl);
         request.post({
             url: porturl + "getById",
             json: {}
