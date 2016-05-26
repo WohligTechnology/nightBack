@@ -570,6 +570,7 @@ var models = {
             } else {
                 request.post({
                     url: porturl + "getApp2",
+                    rejectUnauthorized: false,
                     json: {
                         user: split[3]
                     }

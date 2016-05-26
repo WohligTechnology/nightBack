@@ -556,6 +556,7 @@ var models = {
     createApp: function(data, callback) {
         request.post({
             url: porturl + "lastPort",
+            rejectUnauthorized: false,
             json: {}
         }, function(err, http, body) {
             if (err) {
@@ -647,6 +648,7 @@ var models = {
                                 } else {
                                     request.post({
                                         url: porturl + "save",
+                                        rejectUnauthorized: false,
                                         json: {
                                             prefill: -1,
                                             port: portnum,
@@ -680,6 +682,7 @@ var models = {
         console.log(porturl);
         request.post({
             url: porturl + "getById",
+            rejectUnauthorized: false,
             json: {}
         }, function(err, http, body) {
             console.log(err);
@@ -704,6 +707,7 @@ var models = {
                                 setTimeout(function() {
                                     request.post({
                                         url: porturl + "save",
+                                        rejectUnauthorized: false,
                                         json: {
                                             _id: body.data._id,
                                             user: data.sendme,
@@ -763,6 +767,7 @@ var models = {
             } else {
                 request.post({
                     url: porturl + "getApp2",
+                    rejectUnauthorized: false,
                     json: {
                         user: split[3]
                     }
