@@ -558,6 +558,8 @@ var models = {
             url: porturl + "lastPort",
             json: {}
         }, function(err, http, body) {
+            console.log(err);
+            console.log(body);
             if (err) {
                 console.log(err);
                 callback(err, null);
