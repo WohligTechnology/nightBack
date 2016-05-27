@@ -20,7 +20,7 @@ var crypto = require('crypto');
 var format = 'aes192';
 
 /////////////////////////URL
-var porturl = "http://api.blazen.io/port/";
+var porturl = "https://api.blazen.io/port/";
 // var porturl = "http://api.blazen.io:84/port/";
 // var porturl = "http://192.168.1.129:84/port/";
 
