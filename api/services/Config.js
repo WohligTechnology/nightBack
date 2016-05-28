@@ -700,28 +700,29 @@ var models = {
                     setTimeout(function() {
                         var mypath = "cd ../" + body.data.appname + "/ && bash startme.sh";
                         process.exec(mypath, function(err, stdout, stderr) {
+                            console.log(err);
+                            console.log(stdout);
+                            console.log(stderr);
                             if (stdout) {
-                                setTimeout(function() {
-                                    request.post({
-                                        url: porturl + "save",
-                                        rejectUnauthorized: false,
-                                        json: {
-                                            _id: body.data._id,
-                                            user: data.sendme,
-                                            name: data.name,
-                                            image: data.image,
-                                            title: data.title,
-                                            url: "http://app.blazen.io:" + body.data.appname
-                                        }
-                                    }, function(err, http, body) {
-                                        if (err) {
-                                            console.log(err);
-                                            callback(err, null);
-                                        } else {
-                                            callback(null, { comment: "App lifted successfully" });
-                                        }
-                                    });
-                                }, 5000);
+                                request.post({
+                                    url: porturl + "save",
+                                    rejectUnauthorized: false,
+                                    json: {
+                                        _id: body.data._id,
+                                        user: data.sendme,
+                                        name: data.name,
+                                        image: data.image,
+                                        title: data.title,
+                                        url: "http://app.blazen.io:" + body.data.appname
+                                    }
+                                }, function(err, http, body) {
+                                    if (err) {
+                                        console.log(err);
+                                        callback(err, null);
+                                    } else {
+                                        callback(null, { comment: "App lifted successfully" });
+                                    }
+                                });
                             } else {
                                 callback(null, { comment: "Some Error", err: err });
                             }
