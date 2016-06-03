@@ -22,7 +22,7 @@ var format = 'aes192';
 /////////////////////////URL
 var porturl = "https://api.blazen.io/port/";
 // var porturl = "http://api.blazen.io:84/port/";
-// var porturl = "http://192.168.1.129:84/port/";
+var porturl = "http://192.168.1.129:84/port/";
 
 var gfs = Grid(mongoose.connections[0].db, mongoose);
 gfs.mongo = mongoose.mongo;
@@ -700,9 +700,6 @@ var models = {
                     setTimeout(function() {
                         var mypath = "cd ../" + body.data.appname + "/ && bash startme.sh";
                         process.exec(mypath, function(err, stdout, stderr) {
-                            console.log(err);
-                            console.log(stdout);
-                            console.log(stderr);
                             if (stdout) {
                                 request.post({
                                     url: porturl + "save",
@@ -794,6 +791,182 @@ var models = {
         } else {
             callback({ message: "Key Incorrect" }, {});
         }
+    },
+    editFolder: function(data, callback) {
+        request.post({
+            url: porturl + "getAll",
+            rejectUnauthorized: false,
+            json: {}
+        }, function(err, http, body) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                if (body.data && body.data.length > 0) {
+                    if (data.type == "app") {
+                        async.each(body.data, function(port, callback1) {
+                            process.exec("cp -avr newApp/app2 newApp/appstart.js newApp/startapp.sh ../" + port.appname, function(err, stdout, stderr) {
+                                if (err) {
+                                    console.log(err);
+                                    callback1(err, null);
+                                } else if (stderr) {
+                                    console.log(stderr);
+                                    callback1(stderr, null);
+                                } else {
+                                    async.parallel([
+                                        function(callback2) {
+                                            var readApp = "../" + port.appname + "/app2/www/js/services.js";
+                                            fs.readFile(readApp, 'utf8', function(err, readme) {
+                                                if (err) {
+                                                    console.log(err);
+                                                    callback2(null, "Write Done");
+                                                } else {
+                                                    readme = readme.split("$$$&&&").join(":" + port.appname);
+                                                    var writeApp = fs.createWriteStream(readApp);
+                                                    writeApp.write(readme);
+                                                    callback2(null, "Write Done");
+                                                }
+                                            });
+                                        },
+                                        function(callback2) {
+                                            var readAppjs = "../" + port.appname + "/appstart.js";
+                                            fs.readFile(readAppjs, 'utf8', function(err, readjs) {
+                                                if (err) {
+                                                    console.log(err);
+                                                    callback2(null, "Write Done");
+                                                } else {
+                                                    var editPort = parseInt(port.port) + 20000;
+                                                    readjs = readjs.split("$$$&&&").join(editPort.toString());
+                                                    var writeApp = fs.createWriteStream(readAppjs);
+                                                    writeApp.write(readjs);
+                                                    if (port.user) {
+                                                        var killp = "fuser -k " + (port.port + 20000) + "/tcp";
+                                                        var mypath = "cd ../" + port.appname + "/ && bash startapp.sh";
+
+                                                        function callStart() {
+                                                            process.exec(mypath, function(err, stdout, stderr) {
+                                                                if (stdout) {
+                                                                    callback2(null, "Write Done");
+                                                                } else {
+                                                                    callback2(null, "Write Done");
+                                                                }
+                                                            });
+                                                        }
+                                                        process.exec(killp, function(err, stdout, stderr) {
+                                                            if (stdout) {
+                                                                callStart();
+                                                            } else {
+                                                                callStart();
+                                                            }
+                                                        });
+                                                    } else {
+                                                        callback2(null, "Write Done");
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    ], function(err, parRespo) {
+                                        if (err) {
+                                            console.log(err);
+                                            callback1(err, null)
+                                        } else {
+                                            callback1(null, "Write Done");
+                                        }
+                                    });
+                                }
+                            });
+                        }, function(err) {
+                            if (err) {
+                                console.log(err);
+                                callback(err, null);
+                            } else {
+                                callback(null, { message: "Apps Copied Successfully" });
+                            }
+                        });
+                    } else if (data.type == "back") {
+                        async.each(body.data, function(port, callback1) {
+                            process.exec("cp -avr newApp/back newApp/backstart.js newApp/startback.sh ../" + port.appname, function(err, stdout, stderr) {
+                                if (err) {
+                                    console.log(err);
+                                } else if (stderr) {
+                                    console.log(stderr);
+                                } else {
+                                    async.parallel([
+                                        function(callback2) {
+                                            var readApp = "../" + port.appname + "/back/index.html";
+                                            fs.readFile(readApp, 'utf8', function(err, readme) {
+                                                if (err) {
+                                                    console.log(err);
+                                                } else {
+                                                    readme = readme.split("$$$&&&").join(":" + port.appname);
+                                                    var writeApp = fs.createWriteStream(readApp);
+                                                    writeApp.write(readme);
+                                                    callback2(null, "Write Done");
+                                                }
+                                            });
+                                        },
+                                        function(callback2) {
+                                            var readAppjs = "../" + port.appname + "/backstart.js";
+                                            fs.readFile(readAppjs, 'utf8', function(err, readjs) {
+                                                if (err) {
+                                                    console.log(err);
+                                                } else {
+                                                    var editPort = parseInt(port.port) + 30000;
+                                                    readjs = readjs.split("$$$&&&").join(editPort.toString());
+                                                    var writeApp = fs.createWriteStream(readAppjs);
+                                                    writeApp.write(readjs);
+                                                    if (port.user) {
+                                                        var killp = "fuser -k " + (port.port + 30000) + "/tcp";
+                                                        var mypath = "cd ../" + port.appname + "/ && bash startback.sh";
+
+                                                        function callStart() {
+                                                            process.exec(mypath, function(err, stdout, stderr) {
+                                                                if (stdout) {
+                                                                    callback2(null, "Write Done");
+                                                                } else {
+                                                                    callback2(null, "Write Done");
+                                                                }
+                                                            });
+                                                        }
+                                                        process.exec(killp, function(err, stdout, stderr) {
+                                                            if (stdout) {
+                                                                callStart();
+                                                            } else {
+                                                                callStart();
+                                                            }
+                                                        });
+                                                    } else {
+                                                        callback2(null, "Write Done");
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    ], function(err, parRespo) {
+                                        if (err) {
+                                            console.log(err);
+                                            callback1(err, null)
+                                        } else {
+                                            callback1(null, "Write Done");
+                                        }
+                                    });
+                                }
+                            });
+                        }, function(err) {
+                            if (err) {
+                                console.log(err);
+                                callback(err, null);
+                            } else {
+                                callback(null, { message: "Apps Copied Successfully" });
+                            }
+                        });
+                    } else {
+                        callback({ message: "Inavlid Params" }, null);
+                    }
+                } else {
+                    callback({ message: "App Not Found" }, null);
+                }
+            }
+        });
     },
     ////////////////////////////////MOBILE
     getAllMob: function(data, callback) {

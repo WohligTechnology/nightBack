@@ -252,5 +252,18 @@ module.exports = {
                 data: "Please provide url"
             });
         }
+    },
+    editFolder: function(req, res) {
+        function callback(err, data) {
+            Config.GlobalCallback(err, data, res);
+        }
+        if (req.body && req.body.type && req.body.type != "") {
+            Config.editFolder(req.body, callback);
+        } else {
+            res.json({
+                value: false,
+                data: "Please provide param"
+            });
+        }
     }
 };
