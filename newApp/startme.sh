@@ -1,2 +1,2 @@
 sudo rm -rf .tmp/public
-forever start app.js --prod
+forever start --uid $$$&&& app.js --prod

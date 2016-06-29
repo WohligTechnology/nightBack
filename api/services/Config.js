@@ -258,14 +258,9 @@ var models = {
                                 newHeight = height;
                             }
                             image.resize(parseInt(newWidth), parseInt(newHeight), function(err, image2) {
-
                                 if (style == "cover") {
-
                                     image2.crop(parseInt(width), parseInt(height), function(err, image3) {
-                                        if (err) {
-
-                                        } else {
-
+                                        if (err) {} else {
                                             image3.writeFile('./.tmp/uploads/' + filename, function(err) {
                                                 writer2('./.tmp/uploads/' + filename, newNameExtire, {
                                                     width: newWidth,
@@ -274,9 +269,6 @@ var models = {
                                             });
                                         }
                                     });
-
-
-
                                 } else {
                                     image2.writeFile('./.tmp/uploads/' + filename, function(err) {
                                         writer2('./.tmp/uploads/' + filename, newNameExtire, {
@@ -285,10 +277,6 @@ var models = {
                                         });
                                     });
                                 }
-
-
-
-
                             });
                         });
                     });
@@ -669,7 +657,6 @@ var models = {
                                 }
                             });
                         });
-
                     }
                     createFolder(1);
                 } else {
@@ -697,34 +684,44 @@ var models = {
                     // });
                     // npmInstall.stdout.on("end", function() {
                     //     console.log("stdout: in end");
-                    setTimeout(function() {
-                        var mypath = "cd ../" + body.data.appname + "/ && bash startme.sh";
-                        process.exec(mypath, function(err, stdout, stderr) {
-                            if (stdout) {
-                                request.post({
-                                    url: porturl + "save",
-                                    rejectUnauthorized: false,
-                                    json: {
-                                        _id: body.data._id,
-                                        user: data.sendme,
-                                        name: data.name,
-                                        image: data.image,
-                                        title: data.title,
-                                        url: "http://app.blazen.io:" + body.data.appname
-                                    }
-                                }, function(err, http, body) {
-                                    if (err) {
-                                        console.log(err);
-                                        callback(err, null);
+                    var readApp = "../" + body.data.appname + "/startme.sh";
+                    fs.readFile(readApp, 'utf8', function(err, readme) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            readme = readme.split("$$$&&&").join('"port' + body.data.appname + '"');
+                            var writeApp = fs.createWriteStream(readApp);
+                            writeApp.write(readme);
+                            setTimeout(function() {
+                                var mypath = "cd ../" + body.data.appname + "/ && bash startme.sh";
+                                process.exec(mypath, function(err, stdout, stderr) {
+                                    if (stdout) {
+                                        request.post({
+                                            url: porturl + "save",
+                                            rejectUnauthorized: false,
+                                            json: {
+                                                _id: body.data._id,
+                                                user: data.sendme,
+                                                name: data.name,
+                                                image: data.image,
+                                                title: data.title,
+                                                url: "http://app.blazen.io:" + body.data.appname
+                                            }
+                                        }, function(err, http, body) {
+                                            if (err) {
+                                                console.log(err);
+                                                callback(err, null);
+                                            } else {
+                                                callback(null, { comment: "App lifted successfully" });
+                                            }
+                                        });
                                     } else {
-                                        callback(null, { comment: "App lifted successfully" });
+                                        callback(null, { comment: "Some Error", err: err });
                                     }
                                 });
-                            } else {
-                                callback(null, { comment: "Some Error", err: err });
-                            }
-                        });
-                    }, 2000);
+                            }, 2000);
+                        }
+                    });
                     // });
                 }
             }
@@ -959,11 +956,129 @@ var models = {
                                 callback(null, { message: "Apps Copied Successfully" });
                             }
                         });
+                    } else if (data.type == "api") {
+                        async.each(body.data, function(port, callback1) {
+                            process.exec("cp -avr newApp/api newApp/config newApp/assets ../" + port.appname, function(err, stdout, stderr) {
+                                if (err) {
+                                    console.log(err);
+                                    callback1(err, null);
+                                } else if (stderr) {
+                                    console.log(stderr);
+                                    callback1(stderr, null);
+                                } else {
+                                    if (port.user) {
+                                        async.parallel([
+                                            function(callback2) {
+                                                var killp1 = "forever stop port" + port.appname;
+                                                process.exec(killp1, function(error1, out1, wrong1) {
+                                                    if (out1) {
+                                                        callback2(null, "Write Done");
+                                                    } else {
+                                                        callback2(null, "Write Done");
+                                                    }
+                                                });
+                                            },
+                                            function(callback2) {
+                                                var editPort = parseInt(port.port) + 20000;
+                                                var killp2 = "fuser -k " + editPort.toString() + "/tcp";
+                                                process.exec(killp2, function(error2, out2, wrong2) {
+                                                    if (out2) {
+                                                        callback2(null, "Write Done");
+                                                    } else {
+                                                        callback2(null, "Write Done");
+                                                    }
+                                                });
+                                            },
+                                            function(callback2) {
+                                                var editPort = parseInt(port.port) + 30000;
+                                                var killp3 = "fuser -k " + editPort.toString() + "/tcp";
+                                                process.exec(killp3, function(error3, out3, wrong3) {
+                                                    if (out3) {
+                                                        callback2(null, "Write Done");
+                                                    } else {
+                                                        callback2(null, "Write Done");
+                                                    }
+                                                });
+                                            },
+                                            function(callback2) {
+                                                var readAppjs = "../" + port.appname + "/config/env/production.js";
+                                                fs.readFile(readAppjs, 'utf8', function(err, readjs) {
+                                                    if (err) {
+                                                        console.log(err);
+                                                        callback2(err, null);
+                                                    } else {
+                                                        readjs = readjs.replace("port:", "port:" + port.port);
+                                                        var writeApp = fs.createWriteStream(readAppjs);
+                                                        writeApp.write(readjs);
+                                                        callback2(null, "Write Done");
+                                                    }
+                                                });
+                                            }
+                                        ], function(err, killRes) {
+                                            if (err) {
+                                                console.log(err);
+                                                callback1(err, null);
+                                            } else {
+                                                var mypath = "cd ../" + port.appname + "/ && bash startme.sh";
+                                                setTimeout(function() {
+                                                    process.exec(mypath, function(err, stdout, stderr) {
+                                                        if (stdout) {
+                                                            callback1(null, { message: "Api folders lifted" });
+                                                        } else {
+                                                            callback1({ comment: "Some Error", err: err }, null);
+                                                        }
+                                                    });
+                                                }, 3000);
+                                            }
+                                        });
+                                    } else {
+                                        callback1(null, "Write Done");
+                                    }
+                                }
+                            });
+                        }, function(err) {
+                            if (err) {
+                                console.log(err);
+                                callback(err, null);
+                            } else {
+                                callback(null, { message: "Apps Copied Successfully" });
+                            }
+                        });
                     } else {
                         callback({ message: "Inavlid Params" }, null);
                     }
                 } else {
                     callback({ message: "App Not Found" }, null);
+                }
+            }
+        });
+    },
+    copyFile: function(data, callback) {
+        request.post({
+            url: porturl + "getAll",
+            rejectUnauthorized: false,
+            json: {}
+        }, function(err, http, body) {
+            if (err) {
+                callback(err, null);
+            } else {
+                if (body.data && body.data.length > 0) {
+                    async.each(body.data, function(port, callback1) {
+                        process.exec("cp -r uploads/. " + "../" + port.appname + "/", function(err, stdout, stderr) {
+                            console.log("Model", err);
+                            console.log("Model", stderr);
+                            console.log("Model", stdout);
+                            callback1(null, { message: "Done" });
+                        });
+                    }, function(err) {
+                        if (err) {
+                            callback(err, null);
+                        } else {
+                            callback(null, { message: "Copied successfully" });
+                        }
+                    });
+                } else {
+                    callback({ message: "Folders not found" }, null);
                 }
             }
         });

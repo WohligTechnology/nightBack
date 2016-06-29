@@ -44,6 +44,7 @@ module.exports = {
         Config.readUploaded(req.query.file, req.query.width, req.query.height, req.query.style, res);
     },
     zipUpload: function(req, res) {
+        var reqFile = req.file('file');
         if (req.body && req.body.type && req.body.type != "") {
             var filename = "";
             if (req.body.type == "app") {
@@ -52,7 +53,11 @@ module.exports = {
             } else if (req.body.type == "back") {
                 filename = "back.zip";
                 callMe();
+            } else if (req.body.type == "api") {
+                filename = "api.zip";
+                callMe();
             } else {
+                reqFile.upload(function() {});
                 res.json({
                     value: false,
                     data: "Inavlid Params"
@@ -100,35 +105,67 @@ module.exports = {
                                                 data: stderr2
                                             });
                                         } else {
-                                            process.exec("rm -rf zip/" + filename + " zip/" + filename.split(".")[0], function(err3, stdout3, stderr3) {
-                                                if (err3) {
-                                                    console.log(err3);
-                                                    res.json({
-                                                        value: false,
-                                                        data: err3
-                                                    });
-                                                } else if (stderr3) {
-                                                    console.log(stderr3);
-                                                    res.json({
-                                                        value: false,
-                                                        data: stderr3
-                                                    });
-                                                } else {
-                                                    Config.editFolder(req.body, function(err, data) {
-                                                        if (err) {
-                                                            res.json({
-                                                                value: false,
-                                                                data: err
-                                                            });
-                                                        } else {
-                                                            res.json({
-                                                                value: true,
-                                                                data: "Extraction successful & Copied"
-                                                            });
-                                                        }
-                                                    });
-                                                }
-                                            });
+                                            if (req.body.type == "app" || req.body.type == "back") {
+                                                process.exec("rm -rf zip/" + filename + " zip/" + filename.split(".")[0], function(err3, stdout3, stderr3) {
+                                                    if (err3) {
+                                                        console.log(err3);
+                                                        res.json({
+                                                            value: false,
+                                                            data: err3
+                                                        });
+                                                    } else if (stderr3) {
+                                                        console.log(stderr3);
+                                                        res.json({
+                                                            value: false,
+                                                            data: stderr3
+                                                        });
+                                                    } else {
+                                                        Config.editFolder(req.body, function(err, data) {
+                                                            if (err) {
+                                                                res.json({
+                                                                    value: false,
+                                                                    data: err
+                                                                });
+                                                            } else {
+                                                                res.json({
+                                                                    value: true,
+                                                                    data: "Extraction successful & Copied"
+                                                                });
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            } else {
+                                                process.exec("rm -rf zip/api.zip zip/api zip/assets zip/config", function(err4, stdout4, stderr4) {
+                                                    if (err4) {
+                                                        console.log(err4);
+                                                        res.json({
+                                                            value: false,
+                                                            data: err4
+                                                        });
+                                                    } else if (stderr4) {
+                                                        console.log(stderr4);
+                                                        res.json({
+                                                            value: false,
+                                                            data: stderr4
+                                                        });
+                                                    } else {
+                                                        Config.editFolder(req.body, function(err, data) {
+                                                            if (err) {
+                                                                res.json({
+                                                                    value: false,
+                                                                    data: err
+                                                                });
+                                                            } else {
+                                                                res.json({
+                                                                    value: true,
+                                                                    data: "Extraction successful & Copied"
+                                                                });
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
                                         }
                                     });
                                 }
@@ -141,6 +178,7 @@ module.exports = {
                         }
                     });
                 } else {
+                    reqFile.upload(function() {});
                     res.json({
                         value: false,
                         data: "Upload only zip"
@@ -148,13 +186,79 @@ module.exports = {
                 }
             }
         } else {
+            reqFile.upload(function() {});
             res.json({
                 value: false,
                 data: "Please provide params"
             });
         }
     },
-
+    copyFile: function(req, res) {
+        var reqFile = req.file('file');
+        if (reqFile._files.length > 0) {
+            reqFile.upload({
+                maxBytes: 10000000,
+                dirname: "../../uploads"
+            }, function(err, uploadedFile) {
+                if (err) {
+                    res.json({
+                        value: false,
+                        data: err
+                    });
+                } else if (uploadedFile && uploadedFile.length > 0) {
+                    async.each(uploadedFile, function(n, callback2) {
+                        n.fd = n.fd.split('\\').pop().split('/').pop();
+                        var split = n.fd.split('.');
+                        n.fd = split[0] + "." + split[1].toLowerCase();
+                        process.exec("cd uploads && mv " + n.fd + " " + n.filename, function(err, stdout, stderr) {
+                            if (stdout) {
+                                callback2(null, { message: "Done" });
+                            } else {
+                                callback2(null, { message: "Done" });
+                            }
+                        });
+                    }, function(err) {
+                        if (err) {
+                            res.json({
+                                value: false,
+                                data: err
+                            });
+                        } else {
+                            // res.json({
+                            //     value: true,
+                            //     data: uploadedFile
+                            // });
+                            Config.copyFile(req.body, function(err, data2) {
+                                if (err) {
+                                    console.log("-----------", err);
+                                    res.json({
+                                        value: false,
+                                        data: err
+                                    });
+                                } else {
+                                    process.exec("cd uploads && rm -rf *", function(err1, stdout1, stderr1) {
+                                        console.log("Controller", err1);
+                                        console.log("Controller", stderr1);
+                                        console.log("Controller", stdout1);
+                                        res.json({
+                                            value: true,
+                                            data: "Done"
+                                        });
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        } else {
+            reqFile.upload(function() {});
+            res.json({
+                value: false,
+                data: "Please select file to upload"
+            });
+        }
+    },
     ///////////////////////////MOBILE
     fromApp: function(req, res) {
         function callback2(err) {
